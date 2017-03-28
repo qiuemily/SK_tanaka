@@ -87,7 +87,7 @@ void read_wc(bool verbose=true)
     
     // Now loop over events
     for (int ev=0; ev<nevent; ev++){
-        
+     
         // Read the event from the tree into the WCSimRootEvent instance
         wcsimT->GetEntry(ev);
         
@@ -115,6 +115,32 @@ void read_wc(bool verbose=true)
 
         wcsimrootevent = wcsimrootsuperevent->GetTrigger(index);
 
+        /////////////////////////////////////////////////////////////
+        
+        TObject *tr;
+        WCSimRootTrack *track;
+        float q, dir[3], pos[3], energy;
+        
+        for (int k=0; k<wcsimrootevent->GetNTracks();k++){
+            
+            tr = (wcsimrootevent->GetTracks())->At(k);
+            track = dynamic_cast<WCSimRootTrack*>(tr);
+            
+            for (int j=0; j<3; j++){
+                dir[j] = track->GetDir(j);
+                pos[j] = track->GetStart(j);
+            }
+            energy = track->GetE();
+            
+            particle_type = track->GetIpnu();
+            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+            printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
+            printf("Energy: %f", energy);
+            
+        }
+        /////////////////////////////////////////////////////////////
+        
+        /*
         int ncherenkovdigihits = wcsimrootevent->GetNcherenkovdigihits();
         int ncherenkovhits     = wcsimrootevent->GetNcherenkovhits();
 
@@ -185,7 +211,10 @@ void read_wc(bool verbose=true)
                         printf("ParentID not equal to 1. Value is: %d \n", parent_id);
                     }
 		
-                    tr = (wcsimrootevent->GetTracks())->At(parent_id);
+                    //This was not working
+                    //tr = (wcsimrootevent->GetTracks())->At(parent_id);
+                    
+                    //tr =
                     track = dynamic_cast<WCSimRootTrack*>(tr);
                     
                     for (int j=0; j<3; j++){
@@ -196,8 +225,8 @@ void read_wc(bool verbose=true)
                     
                     particle_type = track->GetIpnu();
                     if (i==0 && verbose){
-                        printf("x, y, z position: (%d, %d, %d)", pos[0], pos[1], pos[2]);
-                        printf("x, y, z direction: (%d, %d, %d)", dir[0], dir[1], dir[2]);
+                        printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+                        printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
                         printf("Energy: %f", energy);
                         
                         //printf("Hit ID: %d \n", hit_id[id]);
@@ -229,9 +258,11 @@ void read_wc(bool verbose=true)
         //} printf("\n"); // Loop over triggers
         
         // reinitialize super event between loops.
+        */
+        
         wcsimrootsuperevent->ReInitialize();
         
     } printf("\n"); // End of loop over events
-  
+    
 }
 
