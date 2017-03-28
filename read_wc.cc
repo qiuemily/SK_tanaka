@@ -188,8 +188,10 @@ void read_wc(bool verbose=true)
                     tr = (wcsimrootevent->GetTracks())->At(parent_id);
                     track = dynamic_cast<WCSimRootTrack*>(tr);
                     
-                    dir = track->GetDir();
-                    pos = track->GetStart();
+                    for (int j=0; j<3; j++){
+                        dir[j] = track->GetDir(j);
+                        pos[j] = track->GetStart(j);
+                    }
                     energy = track->GetE();
                     
                     particle_type = track->GetIpnu();
