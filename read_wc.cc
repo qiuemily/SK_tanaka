@@ -38,25 +38,24 @@ void read_wc(bool verbose=true)
   
     // Get the pointer to the tree from the file
 
-    TTree *wcsimT = (TTree*)file->Get("wcsimT");
+    TTree *tree = (TTree*)file->Get("wcsimT");
   
     // Create a WCSimRootEvent to put stuff from the tree in
 
     WCSimRootEvent* wcsimrootsuperevent = new WCSimRootEvent();
 
     // Set the branch address for reading from the tree
-    // wcsimT has branch wcsimrootevent
+    // tree has branch wcsimrootevent
 
-    TBranch *branch = wcsimT->GetBranch("wcsimrootevent");
+    TBranch *branch = tree->GetBranch("wcsimrootevent");
     branch->SetAddress(&wcsimrootsuperevent);
   
     // Alternatively
-    //wcsimT->SetBranchAddress("wcsimrootevent",&wcsimrootevent);
+    // tree->SetBranchAddress("wcsimrootevent",&wcsimrootevent);
     
     // Force deletion to prevent memory leak
-    wcsimT->GetBranch("wcsimrootevent")->SetAutoDelete(kTRUE);
+    tree->GetBranch("wcsimrootevent")->SetAutoDelete(kTRUE);
 
-    // Geometry wcsimT - only need 1 "event"
     // geotree has 1 entry containing the geometry information for simulated detector
     // wcsimGeoT has branch wcsimrootgeom
 
@@ -81,14 +80,14 @@ void read_wc(bool verbose=true)
     //TH1F *hvtx1 = new TH1F("Event VTX1", "Event VTX1", 200, -1500, 1500);
     //TH1F *hvtx2 = new TH1F("Event VTX2", "Event VTX2", 200, -1500, 1500);
   
-    int nevent = wcsimT->GetEntries();
+    int nevent = tree->GetEntries();
 
     if (verbose) printf("Total number of events: %d \n", nevent);
     
     /////////////////////////////////////////////////////////////
     TObject *tr;
     WCSimRootTrack *track;
-    wcsimT->GetEntry(0);
+    tree->GetEntry(0);
     wcsimrootevent = wcsimrootsuperevent->GetTrigger(0);
 
     int ntrack = wcsimrootevent->GetNtrack();
@@ -118,7 +117,7 @@ void read_wc(bool verbose=true)
     for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance
-        wcsimT->GetEntry(ev);
+        tree->GetEntry(ev);
         
         ofstream vector_file;
         
