@@ -85,7 +85,7 @@ void read_wc(bool verbose=true)
     if (verbose) printf("Total number of events: %d \n", nevent);
     
     /////////////////////////////////////////////////////////////
-    TObject *tr;
+    /*TObject *tr;
     WCSimRootTrack *track;
     tree->GetEntry(0);
     wcsimrootevent = wcsimrootsuperevent->GetTrigger(0);
@@ -110,7 +110,7 @@ void read_wc(bool verbose=true)
         printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
         printf("Energy: %f", energy);
         
-    }
+    }*/
     /////////////////////////////////////////////////////////////
     
     // Now loop over events
@@ -143,7 +143,6 @@ void read_wc(bool verbose=true)
 
         wcsimrootevent = wcsimrootsuperevent->GetTrigger(index);
         
-        /*
         int ncherenkovdigihits = wcsimrootevent->GetNcherenkovdigihits();
         int ncherenkovhits     = wcsimrootevent->GetNcherenkovhits();
 
@@ -261,7 +260,6 @@ void read_wc(bool verbose=true)
         //} printf("\n"); // Loop over triggers
         
         // reinitialize super event between loops.
-        */
         
         wcsimrootsuperevent->ReInitialize();
         
