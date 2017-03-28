@@ -116,12 +116,13 @@ void read_wc(bool verbose=true)
         wcsimrootevent = wcsimrootsuperevent->GetTrigger(index);
 
         /////////////////////////////////////////////////////////////
-        
         TObject *tr;
         WCSimRootTrack *track;
+        int ntrack = wcsimrootevent->GetNtrack();
+        
         float q, dir[3], pos[3], energy;
         
-        for (int k=0; k<wcsimrootevent->GetNTrack();k++){
+        for (int k=0; k<ntrack;k++){
             
             tr = (wcsimrootevent->GetTracks())->At(k);
             track = dynamic_cast<WCSimRootTrack*>(tr);
