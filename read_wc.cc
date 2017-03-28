@@ -85,6 +85,35 @@ void read_wc(bool verbose=true)
 
     if (verbose) printf("Total number of events: %d \n", nevent);
     
+    /////////////////////////////////////////////////////////////
+    TObject *tr;
+    WCSimRootTrack *track;
+    wcsimT->GetEntry(0);
+    wcsimrootevent = wcsimrootsuperevent->GetTrigger(0);
+
+    int ntrack = wcsimrootevent->GetNtrack();
+    
+    float q, dir[3], pos[3], energy;
+    
+    for (int k=0; k<ntrack;k++){
+        
+        tr = (wcsimrootevent->GetTracks())->At(k);
+        track = dynamic_cast<WCSimRootTrack*>(tr);
+        
+        for (int j=0; j<3; j++){
+            dir[j] = track->GetDir(j);
+            pos[j] = track->GetStart(j);
+        }
+        energy = track->GetE();
+        
+        particle_type = track->GetIpnu();
+        printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+        printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
+        printf("Energy: %f", energy);
+        
+    }
+    /////////////////////////////////////////////////////////////
+    
     // Now loop over events
     for (int ev=0; ev<nevent; ev++){
      
@@ -114,32 +143,6 @@ void read_wc(bool verbose=true)
         int total_hits = 0;
 
         wcsimrootevent = wcsimrootsuperevent->GetTrigger(index);
-
-        /////////////////////////////////////////////////////////////
-        TObject *tr;
-        WCSimRootTrack *track;
-        int ntrack = wcsimrootevent->GetNtrack();
-        
-        float q, dir[3], pos[3], energy;
-        
-        for (int k=0; k<ntrack;k++){
-            
-            tr = (wcsimrootevent->GetTracks())->At(k);
-            track = dynamic_cast<WCSimRootTrack*>(tr);
-            
-            for (int j=0; j<3; j++){
-                dir[j] = track->GetDir(j);
-                pos[j] = track->GetStart(j);
-            }
-            energy = track->GetE();
-            
-            particle_type = track->GetIpnu();
-            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
-            printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-            printf("Energy: %f", energy);
-            
-        }
-        /////////////////////////////////////////////////////////////
         
         /*
         int ncherenkovdigihits = wcsimrootevent->GetNcherenkovdigihits();
