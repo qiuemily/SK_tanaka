@@ -3,6 +3,7 @@
 #include <TH1F.h>
 #include <stdio.h>     
 #include <stdlib.h>    
+#include "read_wc.h"
 
 void read_wc(bool verbose=true)
 {
@@ -113,13 +114,30 @@ void read_wc(bool verbose=true)
     }*/
     /////////////////////////////////////////////////////////////
     
+    // Info in output images
+    // {"true_vertex": [-358.315, 871.359, 1591.82],
+    // "true_direction": [0.024953, 0.080551, 0.996438],
+    // "vertex": [-376.02, 892.217, 1596.6],
+    // "direction": [0.0597496, 0.0283124, 0.997812],
+    // "particle_id": 11,
+    // "worked_fiTQun": true,
+    // "nllcut_fiTQun": 464.777,
+    // "nll_e": 5615.52,
+    // "energy": 404.834,
+    // "data_set": 4,
+    // "dist_to_wall": 213.867,
+    // "radius": 213.867,
+    // "image_width": 1249.73,
+    // "phi_vec": [0.428209, -0.90368, 0],
+    // "theta_vec": [-0.901702, -0.427272, 0.0661181]}
+    
     // Now loop over events
     for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance
         tree->GetEntry(ev);
         
-        ofstream vector_file;
+        //ofstream vector_file;
         
         int particle_out_id = (electron)? 11 : 13;
         int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
@@ -157,9 +175,10 @@ void read_wc(bool verbose=true)
         }
             
         if (ncherenkovhits < 1 || ncherenkovdigihits < 1) continue;
-
-        //for (i=0;i<(ncherenkovdigihits>4 ? 4 : ncherenkovdigihits);i++){
         
+        //if (not passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) continue;
+        
+        //for (i=0;i<(ncherenkovdigihits>4 ? 4 : ncherenkovdigihits);i++){
         for (int i=0;i<ncherenkovdigihits;i++)
         {
             // Loop through elements in the TClonesArray of WCSimRootCherenkovDigHits
@@ -214,7 +233,7 @@ void read_wc(bool verbose=true)
                     }
 		
                     //This was not working
-                    //tr = (wcsimrootevent->GetTracks())->At(parent_id);
+                    tr = (wcsimrootevent->GetTracks())->At(parent_id);
                     
                     //tr =
                     track = dynamic_cast<WCSimRootTrack*>(tr);
@@ -229,7 +248,7 @@ void read_wc(bool verbose=true)
                     if (i==0 && verbose){
                         printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
                         printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-                        printf("Energy: %f", energy);
+                        printf("Energy: %f\n", energy);
                         
                         //printf("Hit ID: %d \n", hit_id[id]);
                         
@@ -266,4 +285,33 @@ void read_wc(bool verbose=true)
     } printf("\n"); // End of loop over events
     
 }
+
+bool passed_cut(int num_tubes, double *vertex){
+    // If at least 2m from wall and over 160 PMTs hit
+    if (num_tubes > 160 && in_cylinder(vertex, 200.0)) return true;
+    else return false;
+}
+
+bool in_cylinder(float vertex[3]){
+    
+}
+
+bool in_cylinder(double *vertex, double dist){
+    // Check if the vertex is inside the detector cylinder, with an optional cut length off the sides
+    // out_log("Checking if vertex is in cylinder");
+    
+    /*if (vertex.Z() > cut - CAP_HEIGHT && vertex.Z() < CAP_HEIGHT - cut){
+        if (sqrt(pow(vertex.X(), 2) + pow(vertex.Y(), 2)) < CYLINDER_RADIUS - cut){
+            return true;
+        }
+    }*/
+    
+    if (vertex[2] > (dist - CAP_HEIGHT) && vertex[2] < (CAP_HEIGHT - dist)){
+        if (sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)) < CYLINDER_RADIUS - dist){
+            return true;
+        }
+    }
+    return false;
+}
+
 
