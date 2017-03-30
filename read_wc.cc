@@ -88,35 +88,6 @@ void read_wc(bool verbose=true)
 
     if (verbose) printf("Total number of events: %d \n", nevent);
     
-    /////////////////////////////////////////////////////////////
-    /*TObject *tr;
-    WCSimRootTrack *track;
-    tree->GetEntry(0);
-    wcsimrootevent = wcsimrootsuperevent->GetTrigger(0);
-
-    int ntrack = wcsimrootevent->GetNtrack();
-    
-    float q, dir[3], pos[3], energy;
-    
-    for (int k=0; k<ntrack;k++){
-        
-        tr = (wcsimrootevent->GetTracks())->At(k);
-        track = dynamic_cast<WCSimRootTrack*>(tr);
-        
-        for (int j=0; j<3; j++){
-            dir[j] = track->GetDir(j);
-            pos[j] = track->GetStart(j);
-        }
-        energy = track->GetE();
-        
-        particle_type = track->GetIpnu();
-        printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
-        printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-        printf("Energy: %f", energy);
-        
-    }*/
-    /////////////////////////////////////////////////////////////
-    
     // Info in output images
     // {"true_vertex": [-358.315, 871.359, 1591.82],
     // "true_direction": [0.024953, 0.080551, 0.996438],
@@ -176,12 +147,39 @@ void read_wc(bool verbose=true)
             
         if (ncherenkovhits < 1 || ncherenkovdigihits < 1) continue;
         
+        /////////////////////////////////////////////////////////////
+        TObject *tr;
+        WCSimRootTrack *track;
+        
+        int ntrack = wcsimrootevent->GetNtrack();
+        
+        float q, dir[3], pos[3], energy;
+        
+        for (int k=0; k<ntrack;k++){
+            
+            tr = (wcsimrootevent->GetTracks())->At(k);
+            track = dynamic_cast<WCSimRootTrack*>(tr);
+            
+            for (int j=0; j<3; j++){
+                dir[j] = track->GetDir(j);
+                pos[j] = track->GetStart(j);
+            }
+            energy = track->GetE();
+            
+            particle_type = track->GetIpnu();
+            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+            printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
+            printf("Energy: %f", energy);
+            
+        }
+        /////////////////////////////////////////////////////////////
+        
         
         //if (not passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) continue;
         
-        
         //ofstream vector_file;
         
+        /*
         int particle_out_id = (electron)? 11 : 13;
         double image_mat[30][30];
         
@@ -283,6 +281,7 @@ void read_wc(bool verbose=true)
         } printf("\n");// End of loop over Cherenkov digihits 
 
         printf("Number of Parent IDs < 0: %d in %d total hits.\n \n", parent_id_neg, total_hits);
+        */
         
         //} printf("\n"); // Loop over triggers
         
