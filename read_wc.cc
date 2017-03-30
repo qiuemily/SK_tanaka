@@ -24,8 +24,8 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
-    filename = "root_files/wcsim_100_e-_new_flat.root";
-    electron = true;
+    filename = "root_files/wcsim_mu+_100.root";
+    electron = false;
     
     /*if (filename==NULL){
      file = new TFile("../wcsim.root","read");
@@ -152,10 +152,13 @@ void read_wc(bool verbose=true)
         WCSimRootTrack *track;
         
         int ntrack = wcsimrootevent->GetNtrack();
-        
+        int ipnu, id;
         float q, dir[3], pos[3], energy;
-        
-        for (int k=0; k<ntrack;k++){
+       
+	int true_pos[3] = {0,0,0};
+	int true_dir[3] = {1,0,0};
+ 
+        for (int k=0; k<1;k++){
             
             tr = (wcsimrootevent->GetTracks())->At(k);
             track = dynamic_cast<WCSimRootTrack*>(tr);
@@ -165,12 +168,29 @@ void read_wc(bool verbose=true)
                 pos[j] = track->GetStart(j);
             }
             energy = track->GetE();
-            
-            particle_type = track->GetIpnu();
-            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+            ipnu = track->GetIpnu();
+	    id = track->GetId();
+
+            /*printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
             printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-            printf("Energy: %f", energy);
+            printf("Energy: %f\n", energy);
+            printf("Ipnu: %d \n", ipnu);
+	    printf("ID: %d \n", id);
+	    */
+
+	    for (int m=0; m<3; m++){
+		if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
+            	if (dir[m]!=true_dir[m]) { printf("Direction incorrect: (%d, %d, %d) \n", dir[0], dir[1], dir[2]); break;}
+	    }
+	    if (id != 0) printf("ID incorrect: %d \n", id);
+
+	    if (electron){
+		if (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
+	    }
+            else {
+                if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
             
+            }
         }
         /////////////////////////////////////////////////////////////
         
