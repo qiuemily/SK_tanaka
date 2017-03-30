@@ -30,6 +30,7 @@ void read_wc(bool verbose=true)
      }else{
      file = new TFile(filename,"read");
      }*/
+    
     file = new TFile(filename,"read");
 
     if (!file->IsOpen()){
@@ -137,9 +138,6 @@ void read_wc(bool verbose=true)
         // Read the event from the tree into the WCSimRootEvent instance
         wcsimT->GetEntry(ev);
         
-        //ofstream vector_file;
-        
-        int particle_out_id = (electron)? 11 : 13;
         int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
         
         if (verbose){
@@ -176,7 +174,17 @@ void read_wc(bool verbose=true)
             
         if (ncherenkovhits < 1 || ncherenkovdigihits < 1) continue;
         
+        
         //if (not passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) continue;
+        
+        
+        //ofstream vector_file;
+        
+        int particle_out_id = (electron)? 11 : 13;
+        double image_mat[30][30];
+        
+        // Tube ID, charge, energy, position, direction
+        double hits[ncherenkovdigihits][5];
         
         //for (i=0;i<(ncherenkovdigihits>4 ? 4 : ncherenkovdigihits);i++){
         for (int i=0;i<ncherenkovdigihits;i++)
@@ -194,7 +202,7 @@ void read_wc(bool verbose=true)
             
             // Input Vector text file:
             // x_pos, y_pos, z_pos, particle_id, energy, x_dir, y_dir, z_dir
-            float q, dir[3], pos[3], energy;
+            double q, dir[3], pos[3], energy;
             int tubeid, pmt_x, pmt_y, pmt_z;
             int particle_type, parent_id, t;
             vector<int> hit_id;
@@ -232,10 +240,8 @@ void read_wc(bool verbose=true)
                         printf("ParentID not equal to 1. Value is: %d \n", parent_id);
                     }
 		
-                    //This was not working
+                    //This is not working
                     tr = (wcsimrootevent->GetTracks())->At(parent_id);
-                    
-                    //tr =
                     track = dynamic_cast<WCSimRootTrack*>(tr);
                     
                     for (int j=0; j<3; j++){
@@ -284,34 +290,6 @@ void read_wc(bool verbose=true)
         
     } printf("\n"); // End of loop over events
     
-}
-
-bool passed_cut(int num_tubes, double *vertex){
-    // If at least 2m from wall and over 160 PMTs hit
-    if (num_tubes > 160 && in_cylinder(vertex, 200.0)) return true;
-    else return false;
-}
-
-bool in_cylinder(float vertex[3]){
-    
-}
-
-bool in_cylinder(double *vertex, double dist){
-    // Check if the vertex is inside the detector cylinder, with an optional cut length off the sides
-    // out_log("Checking if vertex is in cylinder");
-    
-    /*if (vertex.Z() > cut - CAP_HEIGHT && vertex.Z() < CAP_HEIGHT - cut){
-        if (sqrt(pow(vertex.X(), 2) + pow(vertex.Y(), 2)) < CYLINDER_RADIUS - cut){
-            return true;
-        }
-    }*/
-    
-    if (vertex[2] > (dist - CAP_HEIGHT) && vertex[2] < (CAP_HEIGHT - dist)){
-        if (sqrt(pow(vertex[0], 2) + pow(vertex[1], 2)) < CYLINDER_RADIUS - dist){
-            return true;
-        }
-    }
-    return false;
 }
 
 
