@@ -22,7 +22,7 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
-    filename = "wcsim_100_e-.root";
+    filename = "wcsim_100_e-_new_flat.root";
     electron = true;
     
     /*if (filename==NULL){
@@ -39,7 +39,7 @@ void read_wc(bool verbose=true)
   
     // Get the pointer to the tree from the file
 
-    TTree *tree = (TTree*)file->Get("wcsimT");
+    TTree *wcsimT = (TTree*)file->Get("wcsimT");
   
     // Create a WCSimRootEvent to put stuff from the tree in
 
@@ -48,14 +48,14 @@ void read_wc(bool verbose=true)
     // Set the branch address for reading from the tree
     // tree has branch wcsimrootevent
 
-    TBranch *branch = tree->GetBranch("wcsimrootevent");
+    TBranch *branch = wcsimT->GetBranch("wcsimrootevent");
     branch->SetAddress(&wcsimrootsuperevent);
   
     // Alternatively
     // tree->SetBranchAddress("wcsimrootevent",&wcsimrootevent);
     
     // Force deletion to prevent memory leak
-    tree->GetBranch("wcsimrootevent")->SetAutoDelete(kTRUE);
+    wcsimT->GetBranch("wcsimrootevent")->SetAutoDelete(kTRUE);
 
     // geotree has 1 entry containing the geometry information for simulated detector
     // wcsimGeoT has branch wcsimrootgeom
@@ -81,14 +81,14 @@ void read_wc(bool verbose=true)
     //TH1F *hvtx1 = new TH1F("Event VTX1", "Event VTX1", 200, -1500, 1500);
     //TH1F *hvtx2 = new TH1F("Event VTX2", "Event VTX2", 200, -1500, 1500);
   
-    int nevent = tree->GetEntries();
+    int nevent = wcsimT->GetEntries();
 
     if (verbose) printf("Total number of events: %d \n", nevent);
     
     /////////////////////////////////////////////////////////////
     /*TObject *tr;
     WCSimRootTrack *track;
-    tree->GetEntry(0);
+    wcsimT->GetEntry(0);
     wcsimrootevent = wcsimrootsuperevent->GetTrigger(0);
 
     int ntrack = wcsimrootevent->GetNtrack();
@@ -135,7 +135,7 @@ void read_wc(bool verbose=true)
     for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance
-        tree->GetEntry(ev);
+        wcsimT->GetEntry(ev);
         
         //ofstream vector_file;
         
