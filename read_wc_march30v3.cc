@@ -24,7 +24,7 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
-    filename = "root_files/wcsim_e-_100_mar30.root";
+    filename = "root_files/wcsim_mu+_100.root";
     electron = false;
     
     /*if (filename==NULL){
@@ -155,12 +155,12 @@ void read_wc(bool verbose=true)
         int ipnu, id;
         float q, dir[3], pos[3], energy;
        
-	//int true_pos[3] = {0,0,0};
-	//int true_dir[3] = {1,0,0};
+	int true_pos[3] = {0,0,0};
+	int true_dir[3] = {1,0,0};
  
-        //for (int k=0; k<1;k++){
+        for (int k=0; k<1;k++){
             
-            tr = (wcsimrootevent->GetTracks())->At(0);
+            tr = (wcsimrootevent->GetTracks())->At(k);
             track = dynamic_cast<WCSimRootTrack*>(tr);
             
             for (int j=0; j<3; j++){
@@ -171,14 +171,14 @@ void read_wc(bool verbose=true)
             ipnu = track->GetIpnu();
 	    id = track->GetId();
 
-	    printf("test");
-            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+            /*printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
             printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
             printf("Energy: %f\n", energy);
             printf("Ipnu: %d \n", ipnu);
 	    printf("ID: %d \n", id);
+	    */
 
-	    /*for (int m=0; m<3; m++){
+	    for (int m=0; m<3; m++){
 		if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
             	if (dir[m]!=true_dir[m]) { printf("Direction incorrect: (%d, %d, %d) \n", dir[0], dir[1], dir[2]); break;}
 	    }
@@ -190,8 +190,8 @@ void read_wc(bool verbose=true)
             else {
                 if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
             
-            }*/
-        //}
+            }
+        }
         /////////////////////////////////////////////////////////////
         
         
