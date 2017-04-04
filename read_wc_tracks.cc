@@ -24,7 +24,8 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
-    filename = "root_files/wcsim_e-_100_mar30.root";
+    filename = "root_files/wcsim_e-_10_3source.root";
+
     electron = false;
     
     /*if (filename==NULL){
@@ -153,28 +154,35 @@ void read_wc(bool verbose=true)
         
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
-        float q, dir[3], pos[3], energy;
+        float q, pdir[3], stop[3], dir[3], start[3], energy;
        
 	//int true_pos[3] = {0,0,0};
 	//int true_dir[3] = {1,0,0};
  
-        //for (int k=0; k<1;k++){
+        for (int k=0; k<1;k++){
             
-            tr = (wcsimrootevent->GetTracks())->At(0);
+            tr = (wcsimrootevent->GetTracks())->At(k);
             track = dynamic_cast<WCSimRootTrack*>(tr);
             
             for (int j=0; j<3; j++){
                 dir[j] = track->GetDir(j);
-                pos[j] = track->GetStart(j);
+                start[j] = track->GetStart(j);
+		stop[j] = track->GetStop(j);
+		pdir[j] = track->GetPdir(j);
             }
+		
+	    // TVector3 test = TVector3(track->GetDir(0), track->GetDir(1), track->GetDir(2));
+
             energy = track->GetE();
             ipnu = track->GetIpnu();
 	    id = track->GetId();
 
-	    printf("test");
-            printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
-            printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-            printf("Energy: %f\n", energy);
+            printf("Start: (%f, %f, %f) \n", start[0], start[1], start[2]);
+            printf("Direction: (%f, %f, %f) \n", dir[0], dir[1], dir[2]);
+            printf("Stop: (%f, %f, %f) \n", start[0], start[1], start[2]);
+	    printf("Pdir: (%f, %f, %f) \n", pdir[0], pdir[1], pdir[2]);
+
+	    printf("Energy: %f\n", energy);
             printf("Ipnu: %d \n", ipnu);
 	    printf("ID: %d \n", id);
 
@@ -191,7 +199,7 @@ void read_wc(bool verbose=true)
                 if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
             
             }*/
-        //}
+        }
         /////////////////////////////////////////////////////////////
         
         
