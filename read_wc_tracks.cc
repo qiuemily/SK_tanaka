@@ -5,7 +5,7 @@
 #include <stdlib.h>    
 #include "read_wc.h"
 
-void read_wc(bool verbose=true)
+void read_wc_tracks(bool verbose=true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -24,7 +24,7 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
-    filename = "root_files/wcsim_e-_10_3source.root";
+    filename = "root_files/wcsim_e-_10_4vtx.root";
 
     electron = false;
     
@@ -152,10 +152,14 @@ void read_wc(bool verbose=true)
         TObject *tr;
         WCSimRootTrack *track;
         
+	TVector3 vertex_trigger = TVector3(wcsimrootevent->GetVtx(0), wcsimrootevent->GetVtx(1), wcsimrootevent->GetVtx(2));
+	float vector_trigger_1[3];
+
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
-        float q, pdir[3], stop[3], dir[3], start[3], energy;
-       
+        float q, pdir[3], dir[3], energy;
+        //float stop[3], start[3];
+
 	//int true_pos[3] = {0,0,0};
 	//int true_dir[3] = {1,0,0};
  
@@ -165,9 +169,11 @@ void read_wc(bool verbose=true)
             track = dynamic_cast<WCSimRootTrack*>(tr);
             
             for (int j=0; j<3; j++){
+		vector_trigger_1[j] = wcsimrootevent->GetVtx(j);
+
                 dir[j] = track->GetDir(j);
-                start[j] = track->GetStart(j);
-		stop[j] = track->GetStop(j);
+                // start[j] = track->GetStart(j);
+		// stop[j] = track->GetStop(j);
 		pdir[j] = track->GetPdir(j);
             }
 		
@@ -177,10 +183,11 @@ void read_wc(bool verbose=true)
             ipnu = track->GetIpnu();
 	    id = track->GetId();
 
-            printf("Start: (%f, %f, %f) \n", start[0], start[1], start[2]);
+            // printf("Start: (%f, %f, %f) \n", start[0], start[1], start[2]);
             printf("Direction: (%f, %f, %f) \n", dir[0], dir[1], dir[2]);
-            printf("Stop: (%f, %f, %f) \n", start[0], start[1], start[2]);
+            // printf("Stop: (%f, %f, %f) \n", start[0], start[1], start[2]);
 	    printf("Pdir: (%f, %f, %f) \n", pdir[0], pdir[1], pdir[2]);
+            printf("Vertex: (%f, %f, %f) \n", vector_trigger_1[0], vector_trigger_1[1], vector_trigger_1[2]);
 
 	    printf("Energy: %f\n", energy);
             printf("Ipnu: %d \n", ipnu);
