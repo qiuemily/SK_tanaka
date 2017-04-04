@@ -5,7 +5,7 @@
 #include <stdlib.h>    
 #include "read_wc.h"
 
-void read_wc(bool verbose=true)
+void read_wc_images(bool verbose=true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -24,9 +24,11 @@ void read_wc(bool verbose=true)
 
     TFile *file;
     // Open the file
+    
     filename = "root_files/wcsim_e-_100_mar30.root";
     electron = false;
-    
+    int particle_out_id = (electron)? 11 : 13;
+
     /*if (filename==NULL){
      file = new TFile("../wcsim.root","read");
      }else{
@@ -112,24 +114,25 @@ void read_wc(bool verbose=true)
         tree->GetEntry(ev);
         
         int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
-        TH2F* h;
+        int index = 0;
+        int num_neg_triggers = 0;
+        
+        //Number of negative parent IDs and hits over all hit IDs in CherenkovDigiHit
+        int parent_id_neg = 0;
+        int total_hits = 0;
+        
+        TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
         
         if (verbose){
             printf("Event: %d \n", ev);
-            printf("Number of Sub-events (triggers) in current event: %d\n \n", number_triggers);
+            printf("Number of Sub-events (triggers) in current event: %d \n", number_triggers);
         }
         
-        if (number_triggers < 1) continue; //Looking only at first trigger if it exists
-
-        int index = 0;
+        if (number_triggers < 1) { num_neg_triggers++; continue;} //Looking only at first trigger if it exists
 
         //Loop over triggers/subevents
         //Comment this line and //Loop over triggers at end of loop
         //for (int index = 0 ; index < number_triggers; index++){
-	
-        //Number of negative parent IDs and hits over all hit IDs in CherenkovDigiHit
-        int parent_id_neg = 0;
-        int total_hits = 0;
         
         wcsimrootevent = wcsimrootsuperevent->GetTrigger(index);
         
@@ -140,15 +143,16 @@ void read_wc(bool verbose=true)
         if(verbose){
             printf("Sub event number: %d \n", index);
             
-            printf("Ncherenkovhits %d\n",     ncherenkovhits);
-            printf("Ncherenkovdigihits %d\n", ncherenkovdigihits);
+            printf("Ncherenkovhits %d \n",     ncherenkovhits);
+            printf("Ncherenkovdigihits %d \n", ncherenkovdigihits);
             printf("Number of Tracks: %d \n", wcsimrootevent->GetNtrack());
         
         }
             
         if (ncherenkovhits < 1 || ncherenkovdigihits < 1) continue;
         
-        /////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////
+        // Getting the vertex
         
         TObject *tr;
         WCSimRootTrack *track;
@@ -156,51 +160,46 @@ void read_wc(bool verbose=true)
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
         float q, energy;
-       
-        TVector3 particle_vertex, particle_direction;
         
-        //int true_pos[3] = {0,0,0};
-        //int true_dir[3] = {1,0,0};
- 
-        for (int k=0; k==0;k++){
+        //for (int k=0; k==0;k++){
             
-            tr = (wcsimrootevent->GetTracks())->At(k);
-            track = dynamic_cast<WCSimRootTrack*>(tr);
+        int track_num = 0;
+        
+        tr = (wcsimrootevent->GetTracks())->At(track_num);
+        track = dynamic_cast<WCSimRootTrack*>(tr);
+        
+        TVector3 particle_vertex(wcsimrootevent->GetVtx(0), wcsimrootevent->GetVtx(1), wcsimrootevent->GetVtx(2));
+        TVector3 particle_direction(track->GetDir(0), track->GetDir(1), track->GetDir(2));
+        TVector3 particle_momentum(track->GetPdir(0), track->GetPdir(1), track->GetPdir(2));
             
-            particle_vertex = TVector3(track->GetStart(0), track->GetStart(1), track->GetStart(2));
-            particle_direction = TVector3(track->GetDir(0), track->GetDir(1), track->GetDir(2));
-            
-            /* for (int j=0; j<3; j++){
-                dir[j] = track->GetDir(j);
-                pos[j] = track->GetStart(j);
-            }*/
-            
-            energy = track->GetE();
-            ipnu = track->GetIpnu();
-            id = track->GetId();
+        energy = track->GetE();
+        ipnu = track->GetIpnu();
+        id = track->GetId();
 
-            if (verbose){
-                printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
-                printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-                printf("Energy: %f\n", energy);
-                printf("Ipnu: %d \n", ipnu);
-                printf("ID: %d \n", id);
-            }
+        if (verbose){
+            printf("Particle Vertex: (%f, %f, %f) \n", particle_vertex(0), particle_vertex(1), particle_vertex(2));
+            printf("Particle Direction: (%f, %f, %f) \n", particle_direction(0), particle_direction(1), particle_direction(2));
             
-            /*for (int m=0; m<3; m++){
-             if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
+            printf("Energy: %f\n", energy);
+            printf("Ipnu: %d \n", ipnu);
+            printf("ID: %d \n", id);
+        }
+            
+        /*for (int m=0; m<3; m++){
+            if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
             if (dir[m]!=true_dir[m]) { printf("Direction incorrect: (%d, %d, %d) \n", dir[0], dir[1], dir[2]); break;}
-             }
-             if (id != 0) printf("ID incorrect: %d \n", id);
+            }
+            if (id != 0) printf("ID incorrect: %d \n", id);
 
-             if (electron){
-             i  f (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
-             }
-             else {
+            if (electron){
+                if (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
+            }
+            else {
                 if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
             
-             }*/
-        }
+            }*/
+        //}
+        
         /////////////////////////////////////////////////////////////
         
         
@@ -209,8 +208,6 @@ void read_wc(bool verbose=true)
             continue;
         }
         //ofstream vector_file;
-        
-        int particle_out_id = (electron)? 11 : 13;
         
         double distance_to_wall = dist_to_wall(particle_vertex, particle_direction);
         double radius = min(DEFAULT_RADIUS, distance_to_wall);
@@ -410,7 +407,7 @@ void read_wc(bool verbose=true)
         
         wcsimrootsuperevent->ReInitialize();
         
-    } printf("\n"); // End of loop over events
+    } printf("\n \n"); // End of loop over events
     
 }
 

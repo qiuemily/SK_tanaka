@@ -32,10 +32,18 @@
 #define CERENKOV_ANGLE 0.6981317008
 #define PMT_THRESHOLD 0.0001
 
+string get_1hot(int particle_id){
+    // Convert the PID to a string, "1, 0" for electron and "0, 1" for muon
+    // Particle ID is 11 if electron, 13 if muon
+    
+    stringstream ss;
+    ss << (particle_id == 11? 1: 0) << ", "<< (particle_id == 13? 1: 0);
+    return ss.str();
+}
+
 bool passed_cut(int num_tubes, TVector3 *vertex){
     // If at least 2m from wall and over 160 PMTs hit
     if (num_tubes > 160 && in_cylinder(vertex, 200.0)) return true;
-    
     else return false;
 }
 
@@ -70,6 +78,7 @@ bool in_cylinder(TVector3 vertex, double dist){
             return true;
         }
     }*/
+    
     return false;
 }
 
@@ -82,4 +91,18 @@ double abs_dist_wall(TVector3 vertex){
     return min(min(dist_cylinder, dist_top_cap), dist_bot_cap);
 }
 
-
+void print_image(ofstream &file, TH2F* h, int data_set, string particle_1hot){
+    // Prints the image, and extra information used by the CNN, to a line in the desired output file.
+    // Iterate over each 2D histogram pixel and prints the contents with ", " separations
+    
+    for (int x = 1; x <= NUM_PIXELS; ++x){
+        for (int y = 1; y <= NUM_PIXELS; ++y){
+            file << h->GetBinContent(x, y) << ", ";
+        }
+    }
+    // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
+    file << data_set << ", " << particle_1hot << endl;
+    
+    
+    out_log("Image histogram printed");
+}
