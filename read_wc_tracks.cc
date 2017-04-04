@@ -152,16 +152,18 @@ void read_wc_tracks(bool verbose=true)
         TObject *tr;
         WCSimRootTrack *track;
         
-	TVector3 vertex_trigger = TVector3(wcsimrootevent->GetVtx(0), wcsimrootevent->GetVtx(1), wcsimrootevent->GetVtx(2));
-	float vector_trigger_1[3];
+        TVector3 vertex_trigger(wcsimrootevent->GetVtx(0), wcsimrootevent->GetVtx(1), wcsimrootevent->GetVtx(2));
+	
+        float vertex_array[3];
 
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
         float q, pdir[3], dir[3], energy;
+        
         //float stop[3], start[3];
 
-	//int true_pos[3] = {0,0,0};
-	//int true_dir[3] = {1,0,0};
+        //int true_pos[3] = {0,0,0};
+        //int true_dir[3] = {1,0,0};
  
         for (int k=0; k<1;k++){
             
@@ -169,44 +171,45 @@ void read_wc_tracks(bool verbose=true)
             track = dynamic_cast<WCSimRootTrack*>(tr);
             
             for (int j=0; j<3; j++){
-		vector_trigger_1[j] = wcsimrootevent->GetVtx(j);
-
+                vertex_array[j] = wcsimrootevent->GetVtx(j);
                 dir[j] = track->GetDir(j);
+                pdir[j] = track->GetPdir(j);
+                
                 // start[j] = track->GetStart(j);
-		// stop[j] = track->GetStop(j);
-		pdir[j] = track->GetPdir(j);
+                // stop[j] = track->GetStop(j);
             }
 		
-	    // TVector3 test = TVector3(track->GetDir(0), track->GetDir(1), track->GetDir(2));
-
             energy = track->GetE();
             ipnu = track->GetIpnu();
-	    id = track->GetId();
+            id = track->GetId();
 
-            // printf("Start: (%f, %f, %f) \n", start[0], start[1], start[2]);
-            printf("Direction: (%f, %f, %f) \n", dir[0], dir[1], dir[2]);
             // printf("Stop: (%f, %f, %f) \n", start[0], start[1], start[2]);
-	    printf("Pdir: (%f, %f, %f) \n", pdir[0], pdir[1], pdir[2]);
-            printf("Vertex: (%f, %f, %f) \n", vector_trigger_1[0], vector_trigger_1[1], vector_trigger_1[2]);
+            // printf("Start: (%f, %f, %f) \n", start[0], start[1], start[2]);
+            
+            printf("Direction: (%f, %f, %f) \n", dir[0], dir[1], dir[2]);
+            printf("Pdir: (%f, %f, %f) \n", pdir[0], pdir[1], pdir[2]);
+            printf("Vertex: (%f, %f, %f) \n", vertex_array[0], vertex_array[1], vertex_array[2]);
+            printf("TVertex: (%f, %f, %f) \n", vertex_trigger(0), vertex_trigger(1), vertex_trigger(2));
 
-	    printf("Energy: %f\n", energy);
+            printf("Energy: %f\n", energy);
             printf("Ipnu: %d \n", ipnu);
-	    printf("ID: %d \n", id);
+            printf("ID: %d \n", id);
 
-	    /*for (int m=0; m<3; m++){
-		if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
+            /*for (int m=0; m<3; m++){
+                if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
             	if (dir[m]!=true_dir[m]) { printf("Direction incorrect: (%d, %d, %d) \n", dir[0], dir[1], dir[2]); break;}
-	    }
-	    if (id != 0) printf("ID incorrect: %d \n", id);
+             }
+             if (id != 0) printf("ID incorrect: %d \n", id);
 
-	    if (electron){
-		if (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
-	    }
-            else {
+             if (electron){
+             if (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
+             }
+             else {
                 if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
             
-            }*/
+             }*/
         }
+        
         /////////////////////////////////////////////////////////////
         
         
