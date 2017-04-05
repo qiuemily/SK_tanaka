@@ -29,12 +29,6 @@ void read_wc_images(bool verbose=true)
     electron = false;
     int particle_out_id = (electron)? 11 : 13;
 
-    /*if (filename==NULL){
-     file = new TFile("../wcsim.root","read");
-     }else{
-     file = new TFile(filename,"read");
-     }*/
-    
     file = new TFile(filename,"read");
 
     if (!file->IsOpen()){
@@ -76,18 +70,13 @@ void read_wc_images(bool verbose=true)
 
     geotree->GetEntry(0);
 
-    // start with the main "subevent", as it contains most of the info
-    // and always exists.
+    // start with the main "subevent", as it contains most of the info and always exists.
   
     WCSimRootTrigger* wcsimrootevent;
 
-    //TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 8000, 0, 8000);
-    //TH1F *hvtx0 = new TH1F("Event VTX0", "Event VTX0", 200, -1500, 1500);
-    //TH1F *hvtx1 = new TH1F("Event VTX1", "Event VTX1", 200, -1500, 1500);
-    //TH1F *hvtx2 = new TH1F("Event VTX2", "Event VTX2", 200, -1500, 1500);
-  
     int nevent = tree->GetEntries();
-
+    int parentID_particletype = 0;
+    
     if (verbose) printf("Total number of events: %d \n", nevent);
     
     // Info in output images
@@ -117,12 +106,12 @@ void read_wc_images(bool verbose=true)
         int index = 0;
         int num_neg_triggers = 0;
         
-        //Number of negative parent IDs and hits over all hit IDs in CherenkovDigiHit
-        int parent_id_neg = 0;
+        //Number of hits over all hit IDs in CherenkovDigiHit
         int total_hits = 0;
         
         TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
-        
+        EventInformation evt_info;
+
         if (verbose){
             printf("Event: %d \n", ev);
             printf("Number of Sub-events (triggers) in current event: %d \n", number_triggers);
@@ -131,6 +120,7 @@ void read_wc_images(bool verbose=true)
         if (number_triggers < 1) { num_neg_triggers++; continue;} //Looking only at first trigger if it exists
 
         //Loop over triggers/subevents
+        
         //Comment this line and //Loop over triggers at end of loop
         //for (int index = 0 ; index < number_triggers; index++){
         
@@ -184,43 +174,39 @@ void read_wc_images(bool verbose=true)
             printf("Ipnu: %d \n", ipnu);
             printf("ID: %d \n", id);
         }
-            
-        /*for (int m=0; m<3; m++){
-            if (pos[m]!=true_pos[m]) { printf("Position incorrect: (%d, %d, %d) \n", pos[0], pos[1], pos[2]); break;}
-            if (dir[m]!=true_dir[m]) { printf("Direction incorrect: (%d, %d, %d) \n", dir[0], dir[1], dir[2]); break;}
-            }
-            if (id != 0) printf("ID incorrect: %d \n", id);
-
-            if (electron){
-                if (ipnu != 11) printf("Ipnu incorrect: %d \n", ipnu);
-            }
-            else {
-                if (ipnu != -13) printf("Ipnu incorrect: %d \n", ipnu);
-            
-            }*/
-        //}
         
         /////////////////////////////////////////////////////////////
         
+        evt_info.true_vertex = particle_vertex;
+        evt_info.true_direction = particle_direction;
         
         if (not passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) {
             printf("Failed cut, continue to next event. \n \n");
             continue;
         }
+        
         //ofstream vector_file;
         
+        // Distance of vertex to the intercept of particle trajectory with cylinder wall
         double distance_to_wall = dist_to_wall(particle_vertex, particle_direction);
+        
+        // Distance of the vertex to centre of image (always in direction of particle trajectory)
         double radius = min(DEFAULT_RADIUS, distance_to_wall);
         
-        double min_width = PMT_DIAM*NUM_PIXELS; // Image width where resolution(PMTs) ~ resolution(image pixels)
-        double scaled_width = 2*CAP_HEIGHT*radius/DEFAULT_RADIUS; // Image width, scaled with radius, for data_set 1 and 2
+        // Image width where resolution(PMTs) ~ resolution(image pixels)
+        double min_width = PMT_DIAM*NUM_PIXELS;
+        
+        // Image width, scaled with radius, for data_set 1 and 2
+        double scaled_width = 2*CAP_HEIGHT*radius/DEFAULT_RADIUS;
         
         double image_width;
         int set;
         
         // Set number of image
         if (radius > 550.){
-            image_width = scaled_width
+            
+            // Use the same (scaled) image size until radius falls below 550cm
+            image_width = scaled_width;
             if (scaled_width > min_width){
                 // set 1: If the resolution of the PMTs is better than that of the image
                 set = 1;
@@ -251,8 +237,10 @@ void read_wc_images(bool verbose=true)
         
         // Set up orthogonal axes to characterize the image plane
         
-        //double phi = ;
-        //double theta = ;
+        double phi = particle_direction.Phi();
+        double theta = particle_direction.Theta();
+        double total_curr_charge = 0;
+        
         TVector3 phi_vec = TVector3(sin(phi), -cos(phi), 0.);
         TVector3 theta_vec = TVector3(-cos(theta)*cos(phi), -cos(theta)*sin(phi), sin(theta));
         
@@ -262,24 +250,22 @@ void read_wc_images(bool verbose=true)
             // Loop through elements in the TClonesArray of WCSimRootCherenkovDigHits
 	
             TObject *element = (wcsimrootevent->GetCherenkovDigiHits())->At(i);
-            TObject *cht;
-            TObject *tr;
+            TObject *cht, *tr;
             WCSimRootTrack *track;
             
             TVector3 pmt_x(0., 0., 0.);
             TVector3 pmt_y(0., 0., 0.);
             TVector3 pmt_position;
-    	
+            
+            bool flag = 1;
+            
             WCSimRootCherenkovDigiHit *wcsimrootcherenkovdigihit = dynamic_cast<WCSimRootCherenkovDigiHit*>(element);
             WCSimRootPMT pmt;
             WCSimRootCherenkovHitTime *cHitTime;
             
             // Input Vector text file:
-            // x_pos, y_pos, z_pos, particle_id, energy, x_dir, y_dir, z_dir
             double q, energy;
-            int tubeid, t;
-            
-            int particle_type, parent_id;
+            int tubeid, t, particle_type, parent_id;
             vector<int> hit_id;
 
             q = wcsimrootcherenkovdigihit->GetQ();
@@ -289,51 +275,47 @@ void read_wc_images(bool verbose=true)
             pmt = geo->GetPMT(tubeid);
 	
             hit_id = (wcsimrootcherenkovdigihit->GetPhotonIds());
-            //if (i<10 && verbose) printf("Number of Tracks: %d \n", wcsimrootevent->GetNtrack());
-
+            
             if (hit_id.size() <= 0){
                 printf("Hit ID array size non-positive, continue to next digitized charge: No. %d \n \n", i);
                 continue;
             }
             
             if (i==0 && verbose) printf("Number of Hits: %d \n", hit_id.size());
-                
+
             total_hits += hit_id.size();
 
             for (int id=0; id<hit_id.size();id++){
                     
                 //Within 1 event, have same hit IDs for different digitized hits (i.e. 1 through hit_id.size()
-                id = 0;
+                //id = 0;
             
                 cht = (wcsimrootevent->GetCherenkovHitTimes())->At(hit_id[id]);
                 cHitTime = dynamic_cast<WCSimRootCherenkovHitTime*>(cht);
                 
                 parent_id = cHitTime->GetParentID();
-	        	
-                if (parent_id < 0){
-                    //printf("Parent ID: %d", parent_id);
-                    //printf(">>CONTINUE \n");
-                    parent_id_neg++;
-                    continue;
-                }
-		    
-                else if (parent_id != 1){
-                    printf("ParentID not equal to 1. Value is: %d \n", parent_id);
-                }
 		
                 //This is not working
                 tr = (wcsimrootevent->GetTracks())->At(parent_id);
                 track = dynamic_cast<WCSimRootTrack*>(tr);
 
-                energy = track->GetE();
-                    
+                // Doesn't seem like this part is working
+                // energy = track->GetE();
+                
                 particle_type = track->GetIpnu();
                 
-                if (i==0 && verbose){
-                    printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
-                    printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
-                    printf("Energy: %f\n", energy);
-                        
+                if (parent_id != 1 || particle_type == 0){
+                    flag = 0;
+                    printf("ParentID/ParticleType are not 1/0. Break. \n \n");
+                    parentID_particletype++;
+                    
+                    break;
+                }
+                
+                /*if (i==0 && verbose){
+                    //printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
+                    //printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
+                    
                     //printf("Hit ID: %d \n", hit_id[id]);
                         
                     //Particle Type is 0 if primary
@@ -341,12 +323,12 @@ void read_wc_images(bool verbose=true)
                         
                     //ID of parent of particle (0 if primary WTF??????????)
                     //printf("Parent ID: %d \n", parent_id);
-                }
+                }*/
                 
             }
             
-            else if (verbose) printf("Hit ID array size <= 0 \n");
-
+            if (flag) continue;
+            
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
  
             if (abs(pmt_position[2]) < 1800){
@@ -354,7 +336,7 @@ void read_wc_images(bool verbose=true)
                 pmt_y = TVector3(0., 0., 1.);
             }
             
-            else if ((int)abs(this_pos[2]) == 1810){
+            else if ((int)abs(pmt_position[2]) == 1810){
                 pmt_x = TVector3(1., 0., 0.);
                 pmt_y = TVector3(0., 1., 0.);
             }
@@ -389,26 +371,33 @@ void read_wc_images(bool verbose=true)
                 double y = rel_vec.Dot(theta_vec)/(z/radius*image_width/2); // Image y-position
                 
                 // Fill the 2D histogram at the image coordinates specified, with weights that average the PMT charge over each photon that is projected
-                h->Fill(x, y, it->first/num_photons);
+                image->Fill(x, y, total_curr_charge/num_photons);
             }
             
-            if (i == 0 && verbose){
+            /* if (i == 0 && verbose){
                 printf("q, t, tubeid: %f %f %d \n", q, t, tubeid, pmt_x, pmt_y, pmt_z);
                 //printf("Track parent ID: %d\n",track->GetParenttype());
-            }
+            }*/
                     
         } printf("End loop over digitized hits. \n");// End of loop over Cherenkov digihits
 
-        printf("Number of Parent IDs < 0: %d in %d total hits.\n \n", parent_id_neg, total_hits);
-        
         //} printf("\n"); // Loop over triggers
         
-        // Reinitialize super event between loops.
+        evt_info.dist_to_wall = dist_to_wall;
+        evt_info.radius = radius;
+        evt_info.image_width = image_width;
+        evt_info.phi_vec = phi_vec;
+        evt_info.theta_vec = theta_vec;
+        evt_info.data_set = set;
         
+        // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
+        image->Reset();
         
     } printf("\n \n"); // End of loop over events
+    delete image;
     
+    return 0;
 }
 
 
