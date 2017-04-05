@@ -49,12 +49,14 @@ string get_1hot(int particle_id){
     return ss.str();
 }
 
+//
 bool passed_cut(int num_tubes, TVector3 *vertex){
     // If at least 2m from wall and over 160 PMTs hit
     if (num_tubes > 160 && in_cylinder(vertex, 200.0)) return true;
     else return false;
 }
 
+//
 double dist_to_wall(TVector3 vertex, TVector3 direction){
     // Calculate the distance of the vertex to the cylinder walls, in the 'direction' direction.
     // User should check that the vertex is inside cylinder before calling thos function.
@@ -71,12 +73,13 @@ double dist_to_wall(TVector3 vertex, TVector3 direction){
 
 }
 
+//
 bool in_cylinder(TVector3 vertex, double dist){
     // Check if the vertex is inside the detector cylinder, with an optional cut length off the sides
     // out_log("Checking if vertex is in cylinder");
     
     if (vertex.Z() > (dist - CAP_HEIGHT) && vertex.Z() < (CAP_HEIGHT - dist)){
-        if (sqrt(pow(vertex.X(), 2) + pow(vertex.Y(), 2)) < (CYLINDER_RADIUS - cut)){
+        if (sqrt(pow(vertex.X(), 2) + pow(vertex.Y(), 2)) < (CYLINDER_RADIUS - DIST)){
             return true;
         }
     }
