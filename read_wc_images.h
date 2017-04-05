@@ -1,4 +1,4 @@
-ifndef Header
+#ifndef Header
 #define Header 1
 
 //#include "skheadC.h"
@@ -15,6 +15,7 @@ ifndef Header
 #include <cmath>
 #include <vector>
 #include <utility>
+#include "EventInformation.h"
 
 //#define DATA_SIZE 11146
 #define NUM_PIXELS 30
@@ -30,6 +31,14 @@ ifndef Header
 #define REQ_ADJACENT 2
 #define CERENKOV_ANGLE 0.6981317008
 #define PMT_THRESHOLD 0.0001
+using namespace std;
+
+bool passed_cut(int num_tubes, TVector3 *vertex);
+double dist_to_wall(TVector3 vertex, TVector3 direction);
+bool in_cylinder(TVector3 vertex, double dist);
+double abs_dist_wall(TVector3 vertex);
+void print_image(ofstream &file, TH2F* h, int data_set, string particle_1hot);
+string get_1hot(int particle_id);
 
 string get_1hot(int particle_id){
     // Convert the PID to a string, "1, 0" for electron and "0, 1" for muon
@@ -102,6 +111,7 @@ void print_image(ofstream &file, TH2F* h, int data_set, string particle_1hot){
     // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
     file << data_set << ", " << particle_1hot << endl;
     
-    
-    out_log("Image histogram printed");
 }
+
+#endif
+
