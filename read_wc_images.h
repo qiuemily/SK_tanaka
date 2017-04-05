@@ -1,10 +1,10 @@
-#ifndef Header
+ifndef Header
 #define Header 1
 
-#include "skheadC.h"
-#include "skparmC.h"
-#include "geopmtC.h"
-#include "sktqC.h"
+//#include "skheadC.h"
+//#include "skparmC.h"
+//#include "geopmtC.h"
+//#include "sktqC.h"
 #include <iostream>
 #include <cstdio>
 #include "TMinuit.h"
@@ -15,7 +15,6 @@
 #include <cmath>
 #include <vector>
 #include <utility>
-#include "EventInformation.h"
 
 //#define DATA_SIZE 11146
 #define NUM_PIXELS 30

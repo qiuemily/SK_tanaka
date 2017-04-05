@@ -3,7 +3,15 @@
 #include <TH1F.h>
 #include <stdio.h>     
 #include <stdlib.h>    
-#include "read_wc.h"
+#include "read_wc_images.h"
+#include "EventInformation.h"
+
+string get_1hot(int particle_id);
+bool passed_cut(int num_tubes, TVector3 *vertex);
+double dist_to_wall(TVector3 vertex, TVector3 direction);
+bool in_cylinder(TVector3 vertex, double dist);
+double abs_dist_wall(TVector3 vertex);
+void print_image(ofstream &file, TH2F* h, int data_set, string particle_1hot);
 
 void read_wc_images(bool verbose=true)
 {
@@ -25,7 +33,7 @@ void read_wc_images(bool verbose=true)
     TFile *file;
     // Open the file
     
-    filename = "root_files/wcsim_e-_100_mar30.root";
+    filename = "root_files/wcsim_e-_100.root";
     electron = false;
     int particle_out_id = (electron)? 11 : 13;
 
@@ -180,7 +188,7 @@ void read_wc_images(bool verbose=true)
         evt_info.true_vertex = particle_vertex;
         evt_info.true_direction = particle_direction;
         
-        if (not passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) {
+        if (!passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) {
             printf("Failed cut, continue to next event. \n \n");
             continue;
         }
