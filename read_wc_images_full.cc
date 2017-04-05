@@ -108,8 +108,6 @@ int read_wc_images_full(bool verbose=true)
     WCSimRootTrigger* wcsimrootevent;
 
     int nevent = tree->GetEntries();
-    int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
-
     int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
 
     if (verbose) printf("Total number of events: %d \n", nevent);
@@ -142,7 +140,9 @@ int read_wc_images_full(bool verbose=true)
      
         // Read the event from the tree into the WCSimRootEvent instance
         tree->GetEntry(ev);
-        
+
+        int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
+
         index = 0;
         num_neg_triggers = 0;
         parentID_particletype = 0;
