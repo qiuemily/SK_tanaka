@@ -137,8 +137,8 @@ int read_wc_images_full(bool verbose=true)
         int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
         int index = 0;
         int num_neg_triggers = 0;
-        
-        //Number of hits over all hit IDs in CherenkovDigiHit
+	int parentID_particletype = 0;
+	int pmt_unfound = 0;
         int total_hits = 0;
         
         TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
@@ -353,7 +353,7 @@ int read_wc_images_full(bool verbose=true)
                 
                 if (parent_id != 1 || particle_type == 0){
                     flag = 0;
-                    printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
+                    //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
                     
                     break;
@@ -387,7 +387,10 @@ int read_wc_images_full(bool verbose=true)
                 pmt_x = TVector3(1., 0., 0.);
                 pmt_y = TVector3(0., 1., 0.);
             }
-            else cout << "ERROR, PMT NOT FOUND" << endl;
+            else{ 
+		//cout << "ERROR, PMT NOT FOUND" << endl;
+		pmt_unfound++;
+	    }
             
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
@@ -429,7 +432,9 @@ int read_wc_images_full(bool verbose=true)
         } printf("End loop over digitized hits. \n");// End of loop over Cherenkov digihits
 
         //} printf("\n"); // Loop over triggers
-        
+        printf("Number of hits with ParentID!=1 or ParticleType != 0: %d \n.", parentID_particletype);
+	printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
+
         evt_info.dist_to_wall = dist_to_wall;
         evt_info.radius = radius;
         evt_info.image_width = image_width;
