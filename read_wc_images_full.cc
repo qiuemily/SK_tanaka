@@ -376,7 +376,7 @@ int read_wc_images_full(bool verbose=true)
             
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
-            printf("PMT Position: (%f, %f, %f", pmt_position(0), pmt_position(1), pmt_position(2));
+            // printf("PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));
             
             if (abs(pmt_position[2]) < 1800){
                 pmt_x = TVector3(pmt_position[1], - pmt_position[0], 0.).Unit();
@@ -395,7 +395,7 @@ int read_wc_images_full(bool verbose=true)
                 
             }
             
-            if (flag) continue;
+            if (flag) { printf("Raised flag, continue"); continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -433,10 +433,12 @@ int read_wc_images_full(bool verbose=true)
                 printf("q, t, tubeid: %f %f %d \n", curr_charge, t, tubeid, pmt_x, pmt_y, pmt_z);
                 //printf("Track parent ID: %d\n",track->GetParenttype());
             }*/
+            if (i%100 == 0) printf("Cherenkov hit: %d \n", i);
                     
         } printf("End loop over digitized hits. \n");// End of loop over Cherenkov digihits
 
         //} printf("\n"); // Loop over triggers
+        
         printf("Number of hits with ParentID!=1 or ParticleType != 0: %d \n.", parentID_particletype);
         printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
 
