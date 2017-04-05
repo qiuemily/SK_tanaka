@@ -423,8 +423,8 @@ int read_wc_images_full(bool verbose=true)
                 //    1) Scale with radius/z to get the conical projection as opposed to a linear projection
                 //    2) Scale with 1/(image_width/2) so that the image coordinate go from -1 to 1
                 
-                double x_rel = rel_vec.Dot(phi_vec)/(double z_rel/radius*image_width/2);   // Image x-position
-                double y_rel = rel_vec.Dot(theta_vec)/(double z_rel/radius*image_width/2); // Image y-position
+                double x_rel = rel_vec.Dot(phi_vec)/(z_rel/radius*image_width/2);   // Image x-position
+                double y_rel = rel_vec.Dot(theta_vec)/(z_rel/radius*image_width/2); // Image y-position
                 
                 // Fill the 2D histogram at the image coordinates specified, with weights that average the PMT charge over each photon that is projected
                 image->Fill(x_rel, y_rel, curr_charge/num_photons);
