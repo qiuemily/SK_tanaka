@@ -1,6 +1,13 @@
 #include "read_wc_images.h"
 #include "EventInformation.h"
 
+bool passed_cut(int num_tubes, TVector3 *vertex);
+double dist_to_wall(TVector3 vertex, TVector3 direction);
+bool in_cylinder(TVector3 vertex, double dist);
+double abs_dist_wall(TVector3 vertex);
+void print_image(ofstream &file, TH2F* h, int data_set, string particle_1hot);
+string get_1hot(int particle_id);
+
 int read_wc_images(bool verbose=true)
 {
     // Load the library with class dictionary info
