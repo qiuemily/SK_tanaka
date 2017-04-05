@@ -181,7 +181,7 @@ int read_wc_images_full(bool verbose=true)
         
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
-        float q, energy;
+        double track_energy;
         
         //for (int k=0; k==0;k++){
             
@@ -194,7 +194,7 @@ int read_wc_images_full(bool verbose=true)
         TVector3 particle_direction(track->GetDir(0), track->GetDir(1), track->GetDir(2));
         TVector3 particle_momentum(track->GetPdir(0), track->GetPdir(1), track->GetPdir(2));
             
-        // energy = track->GetE();
+        track_energy = track->GetE();
         ipnu = track->GetIpnu();
         id = track->GetId();
 
@@ -202,7 +202,7 @@ int read_wc_images_full(bool verbose=true)
             printf("Particle Vertex: (%f, %f, %f) \n", particle_vertex(0), particle_vertex(1), particle_vertex(2));
             printf("Particle Direction: (%f, %f, %f) \n", particle_direction(0), particle_direction(1), particle_direction(2));
             
-            printf("Energy: %f\n", energy);
+            printf("Energy: %f\n", track_energy);
             printf("Ipnu: %d \n", ipnu);
             printf("ID: %d \n", id);
         }
