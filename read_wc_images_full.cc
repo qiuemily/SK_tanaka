@@ -233,7 +233,7 @@ int read_wc_images_full(bool verbose=true)
         
         double dist_cylinder = (sqrt(pow(particle_direction.X()*particle_vertex.X() + particle_direction.Y()*particle_vertex.Y(), 2) - (pow(particle_direction.X(), 2) + pow(particle_direction.Y(), 2))*(pow(particle_vertex.X(), 2) + pow(particle_vertex.Y(), 2) - pow(CYLINDER_RADIUS, 2))) - (particle_direction.X()*particle_vertex.X() + particle_direction.Y()*particle_vertex.Y()))/(pow(particle_direction.X(), 2) + pow(particle_direction.Y(), 2));
 
-        double dist_cap = (direction.Z()/abs(direction.Z())*CAP_HEIGHT-vertex.Z())/direction.Z();
+        double dist_cap = (particle_direction.Z()/abs(particle_direction.Z())*CAP_HEIGHT-particle_vertex.Z())/particle_direction.Z();
         
         double distance_to_wall = min(dist_cylinder, dist_cap);
         
@@ -407,8 +407,8 @@ int read_wc_images_full(bool verbose=true)
                 
                 // Relative vector between the photon intercept with PMT plane and the vertex of the cone
                
-                TVector3 rel_vec = x_coord*pmt_x + y_coord*pmt_y + this_pos - vertex;
-                double z = rel_vec.Dot(direction.Unit()); // Distance along the axis of the cone of the photon intercept
+                TVector3 rel_vec = x_coord*pmt_x + y_coord*pmt_y + pmt_position - particle_vertex;
+                double z = rel_vec.Dot(particle_direction.Unit()); // Distance along the axis of the cone of the photon intercept
                 
                 // Find the radial coordinates of the photon intercept (rel. to cone) and transform to get the image coordinates
                 //    1) Scale with radius/z to get the conical projection as opposed to a linear projection
