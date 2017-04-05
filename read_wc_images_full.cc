@@ -137,8 +137,8 @@ int read_wc_images_full(bool verbose=true)
         int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
         int index = 0;
         int num_neg_triggers = 0;
-	int parentID_particletype = 0;
-	int pmt_unfound = 0;
+        int parentID_particletype = 0;
+        int pmt_unfound = 0;
         int total_hits = 0;
         
         TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
@@ -374,10 +374,8 @@ int read_wc_images_full(bool verbose=true)
                 
             }
             
-            if (flag) continue;
-            
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
- 
+            
             if (abs(pmt_position[2]) < 1800){
                 pmt_x = TVector3(pmt_position[1], - pmt_position[0], 0.).Unit();
                 pmt_y = TVector3(0., 0., 1.);
@@ -387,11 +385,15 @@ int read_wc_images_full(bool verbose=true)
                 pmt_x = TVector3(1., 0., 0.);
                 pmt_y = TVector3(0., 1., 0.);
             }
-            else{ 
-		//cout << "ERROR, PMT NOT FOUND" << endl;
-		pmt_unfound++;
-	    }
             
+            else{
+                //cout << "ERROR, PMT NOT FOUND" << endl;
+                flag = 0;
+                pmt_unfound++;
+                
+            }
+            
+            if (flag) continue;
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -433,7 +435,7 @@ int read_wc_images_full(bool verbose=true)
 
         //} printf("\n"); // Loop over triggers
         printf("Number of hits with ParentID!=1 or ParticleType != 0: %d \n.", parentID_particletype);
-	printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
+        printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
 
         evt_info.dist_to_wall = dist_to_wall;
         evt_info.radius = radius;
@@ -451,8 +453,7 @@ int read_wc_images_full(bool verbose=true)
             }
         }
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        file << data_set << ", " << particle_1hot << "\n" << endl;
-        
+        file << set << ", " << particle_out_id << "\n" << endl;
         image->Reset();
         
     } printf("\n \n"); // End of loop over events
