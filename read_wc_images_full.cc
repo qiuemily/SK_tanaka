@@ -417,17 +417,17 @@ int read_wc_images_full(bool verbose=true)
                
                 TVector3 rel_vec = x_coord*pmt_x + y_coord*pmt_y + pmt_position - particle_vertex;
                 
-                double z = rel_vec.Dot(particle_direction.Unit()); // Distance along the axis of the cone of the photon intercept
+                double z_rel = rel_vec.Dot(particle_direction.Unit()); // Distance along the axis of the cone of the photon intercept
                 
                 // Find the radial coordinates of the photon intercept (rel. to cone) and transform to get the image coordinates
                 //    1) Scale with radius/z to get the conical projection as opposed to a linear projection
                 //    2) Scale with 1/(image_width/2) so that the image coordinate go from -1 to 1
                 
-                double x = rel_vec.Dot(phi_vec)/(z/radius*image_width/2);   // Image x-position
-                double y = rel_vec.Dot(theta_vec)/(z/radius*image_width/2); // Image y-position
+                double x_rel = rel_vec.Dot(phi_vec)/(z/radius*image_width/2);   // Image x-position
+                double y_rel = rel_vec.Dot(theta_vec)/(z/radius*image_width/2); // Image y-position
                 
                 // Fill the 2D histogram at the image coordinates specified, with weights that average the PMT charge over each photon that is projected
-                image->Fill(x, y, curr_charge/num_photons);
+                image->Fill(x_rel, y_rel, curr_charge/num_photons);
             }
             
             /* if (i == 0 && verbose){
@@ -453,9 +453,9 @@ int read_wc_images_full(bool verbose=true)
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
         
-        for (int x = 1; x <= NUM_PIXELS; ++x){
-            for (int y = 1; y <= NUM_PIXELS; ++y){
-                file << h->GetBinContent(x, y) << ", ";
+        for (int x_pixel = 1; x_pixel <= NUM_PIXELS; ++x_pixel){
+            for (int y_pixel = 1; y_pixel <= NUM_PIXELS; ++y_pixel){
+                file << h->GetBinContent(x_pixel, y_pixel) << ", ";
             }
         }
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
