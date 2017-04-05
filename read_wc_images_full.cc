@@ -194,7 +194,7 @@ int read_wc_images_full(bool verbose=true)
         TVector3 particle_direction(track->GetDir(0), track->GetDir(1), track->GetDir(2));
         TVector3 particle_momentum(track->GetPdir(0), track->GetPdir(1), track->GetPdir(2));
             
-        energy = track->GetE();
+        // energy = track->GetE();
         ipnu = track->GetIpnu();
         id = track->GetId();
 
@@ -311,11 +311,11 @@ int read_wc_images_full(bool verbose=true)
             WCSimRootCherenkovHitTime *cHitTime;
             
             // Input Vector text file:
-            double q, energy;
+            double curr_charge, energy;
             int tubeid, t, particle_type, parent_id;
             vector<int> hit_id;
 
-            q = wcsimrootcherenkovdigihit->GetQ();
+            curr_charge = wcsimrootcherenkovdigihit->GetQ();
             t = wcsimrootcherenkovdigihit->GetT();
             tubeid = wcsimrootcherenkovdigihit->GetTubeId();
             
@@ -353,12 +353,12 @@ int read_wc_images_full(bool verbose=true)
                 
                 if (parent_id != 1 || particle_type == 0){
                     flag = 0;
-                    printf("ParentID/ParticleType are not 1/0. Break. \n \n");
+                    printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
                     
                     break;
                 }
-                
+
                 /*if (i==0 && verbose){
                     //printf("x, y, z position: (%d, %d, %d) \n", pos[0], pos[1], pos[2]);
                     //printf("x, y, z direction: (%d, %d, %d) \n", dir[0], dir[1], dir[2]);
@@ -418,11 +418,11 @@ int read_wc_images_full(bool verbose=true)
                 double y = rel_vec.Dot(theta_vec)/(z/radius*image_width/2); // Image y-position
                 
                 // Fill the 2D histogram at the image coordinates specified, with weights that average the PMT charge over each photon that is projected
-                image->Fill(x, y, total_curr_charge/num_photons);
+                image->Fill(x, y, curr_charge/num_photons);
             }
             
             /* if (i == 0 && verbose){
-                printf("q, t, tubeid: %f %f %d \n", q, t, tubeid, pmt_x, pmt_y, pmt_z);
+                printf("q, t, tubeid: %f %f %d \n", curr_charge, t, tubeid, pmt_x, pmt_y, pmt_z);
                 //printf("Track parent ID: %d\n",track->GetParenttype());
             }*/
                     
