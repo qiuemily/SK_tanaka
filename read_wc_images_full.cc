@@ -61,6 +61,7 @@ int read_wc_images_full(bool verbose=true)
     
     int particle_out_id = (electron)? 11 : 13;
     TFile *file;
+    
     file = new TFile(filename,"read");
 
     if (!file->IsOpen()){
@@ -107,8 +108,10 @@ int read_wc_images_full(bool verbose=true)
     WCSimRootTrigger* wcsimrootevent;
 
     int nevent = tree->GetEntries();
-    int parentID_particletype = 0;
-    
+    int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
+
+    int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
+
     if (verbose) printf("Total number of events: %d \n", nevent);
     
     // Info in output images
@@ -129,19 +132,23 @@ int read_wc_images_full(bool verbose=true)
     // "theta_vec": [-0.901702, -0.427272, 0.0661181]}
     
     // Now loop over events
+
+    TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
+    
+    TObject *tr;
+    WCSimRootTrack *track;
+    
     for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance
         tree->GetEntry(ev);
         
-        int number_triggers = wcsimrootsuperevent->GetNumberOfEvents();
-        int index = 0;
-        int num_neg_triggers = 0;
-        int parentID_particletype = 0;
-        int pmt_unfound = 0;
-        int total_hits = 0;
+        index = 0;
+        num_neg_triggers = 0;
+        parentID_particletype = 0;
+        pmt_unfound = 0;
+        total_hits = 0;
         
-        TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
         EventInformation evt_info;
 
         if (verbose){
@@ -175,9 +182,6 @@ int read_wc_images_full(bool verbose=true)
         
         ///////////////////////////////////////////////////////////
         // Getting the vertex
-        
-        TObject *tr;
-        WCSimRootTrack *track;
         
         int ntrack = wcsimrootevent->GetNtrack();
         int ipnu, id;
@@ -227,10 +231,7 @@ int read_wc_images_full(bool verbose=true)
             continue;
         }
         
-        //ofstream vector_file;
-        
         // Distance of vertex to the intercept of particle trajectory with cylinder wall
-        
         double dist_cylinder = (sqrt(pow(particle_direction.X()*particle_vertex.X() + particle_direction.Y()*particle_vertex.Y(), 2) - (pow(particle_direction.X(), 2) + pow(particle_direction.Y(), 2))*(pow(particle_vertex.X(), 2) + pow(particle_vertex.Y(), 2) - pow(CYLINDER_RADIUS, 2))) - (particle_direction.X()*particle_vertex.X() + particle_direction.Y()*particle_vertex.Y()))/(pow(particle_direction.X(), 2) + pow(particle_direction.Y(), 2));
 
         double dist_cap = (particle_direction.Z()/abs(particle_direction.Z())*CAP_HEIGHT-particle_vertex.Z())/particle_direction.Z();
@@ -351,7 +352,7 @@ int read_wc_images_full(bool verbose=true)
                 
                 particle_type = track->GetIpnu();
                 
-                if (parent_id != 1 || particle_type == 0){
+                if (parent_id != 1 || particle_type != 0){
                     flag = 0;
                     //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
@@ -395,7 +396,7 @@ int read_wc_images_full(bool verbose=true)
                 
             }
             
-            if (flag) { printf("Raised flag, continue"); continue;}
+            if (!flag) { printf("Raised flag, continue"); continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -442,7 +443,7 @@ int read_wc_images_full(bool verbose=true)
         printf("Number of hits with ParentID!=1 or ParticleType != 0: %d \n.", parentID_particletype);
         printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
 
-        evt_info.dist_to_wall = dist_to_wall;
+        evt_info.dist_to_wall = distance_to_wall;
         evt_info.radius = radius;
         evt_info.image_width = image_width;
         evt_info.phi_vec = phi_vec;
