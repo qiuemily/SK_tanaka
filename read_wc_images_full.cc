@@ -376,6 +376,8 @@ int read_wc_images_full(bool verbose=true)
             
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
+            printf("PMT Position: (%f, %f, %f", pmt_position(0), pmt_position(1), pmt_position(2));
+            
             if (abs(pmt_position[2]) < 1800){
                 pmt_x = TVector3(pmt_position[1], - pmt_position[0], 0.).Unit();
                 pmt_y = TVector3(0., 0., 1.);
@@ -413,6 +415,7 @@ int read_wc_images_full(bool verbose=true)
                 // Relative vector between the photon intercept with PMT plane and the vertex of the cone
                
                 TVector3 rel_vec = x_coord*pmt_x + y_coord*pmt_y + pmt_position - particle_vertex;
+                
                 double z = rel_vec.Dot(particle_direction.Unit()); // Distance along the axis of the cone of the photon intercept
                 
                 // Find the radial coordinates of the photon intercept (rel. to cone) and transform to get the image coordinates
