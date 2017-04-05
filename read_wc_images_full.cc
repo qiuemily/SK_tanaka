@@ -455,11 +455,11 @@ int read_wc_images_full(bool verbose=true)
         
         for (int x_pixel = 1; x_pixel <= NUM_PIXELS; ++x_pixel){
             for (int y_pixel = 1; y_pixel <= NUM_PIXELS; ++y_pixel){
-                file << h->GetBinContent(x_pixel, y_pixel) << ", ";
+                out_file << image->GetBinContent(x_pixel, y_pixel) << ", ";
             }
         }
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        file << set << ", " << particle_out_id << "\n" << endl;
+        out_file << set << ", " << particle_out_id << "\n" << endl;
         image->Reset();
         
     } printf("\n \n"); // End of loop over events
