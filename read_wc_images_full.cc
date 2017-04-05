@@ -343,20 +343,22 @@ int read_wc_images_full(bool verbose=true)
                 
                 parent_id = cHitTime->GetParentID();
 		
-                //This is not working
-                tr = (wcsimrootevent->GetTracks())->At(parent_id);
-                track = dynamic_cast<WCSimRootTrack*>(tr);
-
-                // Doesn't seem like this part is working
-                // energy = track->GetE();
-                
-                particle_type = track->GetIpnu();
-                
-                if (parent_id != 1 || particle_type != 0){
+                if (parent_id != 1){
                     flag = 0;
                     //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
-                    
+                    break;
+                }
+                
+                tr = (wcsimrootevent->GetTracks())->At(parent_id);
+                track = dynamic_cast<WCSimRootTrack*>(tr);
+            
+                particle_type = track->GetIpnu();
+                
+                if (particle_type != 0){
+                    flag = 0;
+                    //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
+                    parentID_particletype++;
                     break;
                 }
 
@@ -366,11 +368,13 @@ int read_wc_images_full(bool verbose=true)
                     
                     //printf("Hit ID: %d \n", hit_id[id]);
                         
+                    //ID of parent of particle (0 if primary)
+                    //These are typically 1... assume 1 if primary
+                 
+                    //printf("Parent ID: %d \n", parent_id);
+                    
                     //Particle Type is 0 if primary
                     //printf("Particle: %d \n", particle_type);
-                        
-                    //ID of parent of particle (0 if primary WTF??????????)
-                    //printf("Parent ID: %d \n", parent_id);
                 }*/
                 
             }
@@ -396,7 +400,7 @@ int read_wc_images_full(bool verbose=true)
                 
             }
             
-            if (!flag) { printf("Raised flag no: %d. \n", parentID_particletype+pmt_unfound); continue;}
+            if (!flag) { printf("Raised flag no: %d \n", parentID_particletype+pmt_unfound); continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -440,8 +444,9 @@ int read_wc_images_full(bool verbose=true)
 
         //} printf("\n"); // Loop over triggers
         
-        printf("Number of hits with ParentID!=1 or ParticleType != 0: %d \n.", parentID_particletype);
-        printf("Number of hits with PMTs not found: %d \n.", pmt_unfound);
+        printf("Number of hits with ParentID != 1 or ParticleType != 0: %d \n", parentID_particletype);
+        
+        printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
 
         evt_info.dist_to_wall = distance_to_wall;
         evt_info.radius = radius;
@@ -460,7 +465,7 @@ int read_wc_images_full(bool verbose=true)
         }
 
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        out_file << char(set) << ", " << char(particle_out_id) << "\n" << endl;
+        // out_file << char(set) << ", " << char(particle_out_id) << "\n" << endl;
         
         image->Reset();
         
