@@ -396,7 +396,7 @@ int read_wc_images_full(bool verbose=true)
                 
             }
             
-            if (!flag) { printf("Raised flag no: %d", parentID_particletype+pmt_unfound); continue;}
+            if (!flag) { printf("Raised flag no: %d. \n", parentID_particletype+pmt_unfound); continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
