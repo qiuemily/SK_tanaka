@@ -31,7 +31,7 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wc_images(bool verbose=true)
+int read_wc_images_full(bool verbose=true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -222,7 +222,7 @@ int read_wc_images(bool verbose=true)
         
         bool passed_cut = (wcsimrootevent->GetNumTubesHit()>160) && in_cylinder;
         
-        if (!passed_cut(wcsimrootevent->GetNumTubesHit(), particle_vertex)) {
+        if (!passed_cut) {
             printf("Failed cut, continue to next event. \n \n");
             continue;
         }
