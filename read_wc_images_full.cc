@@ -407,7 +407,8 @@ int read_wc_images_full(bool verbose=true)
             else{
                 //cout << "ERROR, PMT NOT FOUND" << endl;
                 flag = 0;
-                printf("PMT Not found. Position: (%f, %f, %f) \n. Raised flag no: %d \n", pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2),parentID_particletype+pmt_unfound);
+                printf("PMT Not found. Position: (%f, %f, %f) \n", pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
+                printf("Raised flag no: %d \n",parentID_particletype+pmt_unfound)
                 
                 pmt_unfound++;
             }
