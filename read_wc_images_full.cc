@@ -51,11 +51,11 @@ int read_wc_images_full(bool verbose=true)
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    filename = "root_files/wcsim_e-_100.root";
+    filename = "root_files/wcsim_mu+_100.root";
     electron = false;
     
     ofstream out_file;
-    out_file.open("images_test.txt");
+    out_file.open("images_mu+_25events.txt");
     
     ///////////////////////////////////////////////////
     
@@ -136,7 +136,8 @@ int read_wc_images_full(bool verbose=true)
     TObject *tr;
     WCSimRootTrack *track;
     
-    for (int ev=0; ev<nevent; ev++){
+    for (int ev=0; ev<25; ev++){
+    //for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance
         tree->GetEntry(ev);
