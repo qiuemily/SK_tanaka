@@ -55,9 +55,12 @@ int read_wc_images_full(bool verbose=true)
     filename = "root_files/wcsim_mu+_100.root";
     bool electron = false;
     bool save = false;
-    int particle_out_id = (electron? 11 : 13)
     
-    ofstream out_file, event_info;
+    int particle_out_id = ((electron)? 11 : 13)
+    
+    ofstream out_file;
+    ofstream event_info;
+    
     event_info.open("event_info.txt")
     out_file.open("get_3int_string");
     
