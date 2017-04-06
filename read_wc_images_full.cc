@@ -399,7 +399,7 @@ int read_wc_images_full(bool verbose=true)
                 pmt_y = TVector3(0., 0., 1.);
             }
             
-            else if ((int)abs(pmt_position[2]) == 1810){
+            else if ((int)abs(pmt_position[2]) == 1818){
                 pmt_x = TVector3(1., 0., 0.);
                 pmt_y = TVector3(0., 1., 0.);
             }
