@@ -59,8 +59,8 @@ void print_struct(ofstream &file, EventInformation* evt_info){
   // Print each entry with a ", " separator
   file << json_string("true_vertex", evt_info->true_vertex) << ", ";
   file << json_string("true_direction", evt_info->true_direction) << ", ";
-  file << json_string("vertex", evt_info->vertex) << ", ";
-  file << json_string("direction", evt_info->direction) << ", ";
+  //file << json_string("vertex", evt_info->vertex) << ", ";
+  //file << json_string("direction", evt_info->direction) << ", ";
   file << json_string("particle_id", evt_info->particle_id) << ", ";
   //file << json_bool("worked_fiTQun", evt_info->worked_fiTQun) << ", ";
   //file << json_string("nllcut_fiTQun", evt_info->nllcut_fiTQun) << ", ";

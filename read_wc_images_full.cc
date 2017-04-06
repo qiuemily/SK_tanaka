@@ -2,6 +2,7 @@
 //#include "skparmC.h"
 //#include "geopmtC.h"
 //#include "sktqC.h"
+
 #include <iostream>
 #include <fstream>
 #include <cstdio>
@@ -52,14 +53,18 @@ int read_wc_images_full(bool verbose=true)
     // MODIFY//
     
     filename = "root_files/wcsim_mu+_100.root";
-    electron = false;
+    bool electron = false;
     
-    ofstream out_file;
+    int particle_out_id = (electron? 11 : 13)
+    
+    ofstream out_file, event_info;
+    event_info.open("event_info.txt")
     out_file.open("images_mu+_25events.txt");
     
     ///////////////////////////////////////////////////
     
-    int particle_out_id = (electron)? 11 : 13;
+    stringstream ss;
+    ss << (electron == true? 1: 0) << ", "<< (electron == false? 1: 0);
     TFile *file;
     
     file = new TFile(filename,"read");
@@ -449,12 +454,17 @@ int read_wc_images_full(bool verbose=true)
         
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
 
+        evt_info.particle_id = particle_out_id;
+        
+        evt_info.energy = track_energy;
+        evt_info.data_set = set;
         evt_info.dist_to_wall = distance_to_wall;
         evt_info.radius = radius;
         evt_info.image_width = image_width;
         evt_info.phi_vec = phi_vec;
         evt_info.theta_vec = theta_vec;
-        evt_info.data_set = set;
+        
+        print_struct(event_info, &evt_info);
         
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
@@ -466,7 +476,7 @@ int read_wc_images_full(bool verbose=true)
         }
 
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        // out_file << char(set) << ", " << char(particle_out_id) << "\n" << endl;
+        out_file << set << ", " << ss.str() << endl;
         out_file << endl;
         
         image->Reset();
