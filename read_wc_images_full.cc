@@ -52,8 +52,7 @@ int read_wc_images_full(bool verbose=true)
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    stringstream filename;
-    filename.str("root_files/wcsim_mu+_100.root");
+    char filename[] = "root_files/wcsim_mu+_100.root";
                  
     bool electron = false;
     bool save = false;
@@ -72,8 +71,7 @@ int read_wc_images_full(bool verbose=true)
     ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
     // cout << ss.str() << endl;
 
-    TFile *file;
-    file = new TFile(filename,"read");
+    TFile *file = new TFile(filename,"read");
 
     if (!file->IsOpen()){
         cout << "Error, could not open input file: " << filename << endl;
