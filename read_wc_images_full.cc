@@ -56,7 +56,7 @@ int read_wc_images_full(bool verbose=true)
     bool electron = false;
     bool save = false;
     
-    int particle_out_id = ((electron)? 11 : 13)
+    int particle_out_id = ((electron)? 11 : 13);
     
     ofstream out_file;
     ofstream event_info;
