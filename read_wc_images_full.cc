@@ -55,7 +55,7 @@ int read_wc_images_full(bool verbose=true)
     char filename[] = "root_files/wcsim_mu+_100.root";
                  
     bool electron = false;
-    bool save = false;
+    bool save = true;
     
     int particle_out_id = ((electron)? 11 : 13);
     
@@ -496,8 +496,8 @@ int read_wc_images_full(bool verbose=true)
     } printf("\n \n"); // End of loop over events
     
     delete image;
-    out_file.close()
-    event_info.close()
+    out_file.close();
+    event_info.close();
     
     return 0;
 }
