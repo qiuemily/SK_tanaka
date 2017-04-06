@@ -52,7 +52,9 @@ int read_wc_images_full(bool verbose=true)
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    filename = "root_files/wcsim_mu+_100.root";
+    stringstream filename;
+    filename.str("root_files/wcsim_mu+_100.root");
+                 
     bool electron = false;
     bool save = false;
     
@@ -67,8 +69,9 @@ int read_wc_images_full(bool verbose=true)
     ///////////////////////////////////////////////////
     
     stringstream ss;
-    ss << (electron == true? 1: 0) << ", "<< (electron == false? 1: 0);
-    printf(ss.str());
+    ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
+    cout << ss.str() << endl;
+    
     return 0;
 
     TFile *file;
