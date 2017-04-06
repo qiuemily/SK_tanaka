@@ -68,8 +68,10 @@ int read_wc_images_full(bool verbose=true)
     
     stringstream ss;
     ss << (electron == true? 1: 0) << ", "<< (electron == false? 1: 0);
+    printf(ss.str());
+    return 0;
+
     TFile *file;
-    
     file = new TFile(filename,"read");
 
     if (!file->IsOpen()){
@@ -490,7 +492,6 @@ int read_wc_images_full(bool verbose=true)
         
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
         out_file << set << ", " << ss.str() << endl;
-        out_file << endl;
     
     } printf("\n \n"); // End of loop over events
     
