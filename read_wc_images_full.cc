@@ -490,8 +490,9 @@ int read_wc_images_full(bool verbose=true)
         wcsimrootsuperevent->ReInitialize();
         
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        out_file << set << ", " << ss.str() << endl;
-    
+        out_file << set;
+        out_file << ", " << ss.str() << endl;
+
     } printf("\n \n"); // End of loop over events
     
     delete image;
