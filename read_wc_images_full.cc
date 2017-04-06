@@ -70,9 +70,7 @@ int read_wc_images_full(bool verbose=true)
     
     stringstream ss;
     ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
-    cout << ss.str() << endl;
-    
-    return 0;
+    // cout << ss.str() << endl;
 
     TFile *file;
     file = new TFile(filename,"read");
@@ -144,7 +142,7 @@ int read_wc_images_full(bool verbose=true)
     
     // Now loop over events
 
-    if (save) TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
+    TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
     
     TObject *tr;
     WCSimRootTrack *track;
@@ -500,6 +498,7 @@ int read_wc_images_full(bool verbose=true)
     
     delete image;
     out_file.close()
+    event_info.close()
     
     return 0;
 }
