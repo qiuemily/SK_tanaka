@@ -466,6 +466,7 @@ int read_wc_images_full(bool verbose=true)
 
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
         // out_file << char(set) << ", " << char(particle_out_id) << "\n" << endl;
+        out_file << endl;
         
         image->Reset();
         
