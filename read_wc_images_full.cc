@@ -54,12 +54,12 @@ int read_wc_images_full(bool verbose=true)
     
     filename = "root_files/wcsim_mu+_100.root";
     bool electron = false;
-    
+    bool save = false;
     int particle_out_id = (electron? 11 : 13)
     
     ofstream out_file, event_info;
     event_info.open("event_info.txt")
-    out_file.open("images_mu+_25events.txt");
+    out_file.open("get_3int_string");
     
     ///////////////////////////////////////////////////
     
@@ -136,7 +136,7 @@ int read_wc_images_full(bool verbose=true)
     
     // Now loop over events
 
-    TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
+    if (save) TH2F* image = new TH2F("h", "PMT Display", NUM_PIXELS, -1., 1., NUM_PIXELS, -1., 1.);
     
     TObject *tr;
     WCSimRootTrack *track;
@@ -353,6 +353,7 @@ int read_wc_images_full(bool verbose=true)
                     flag = 0;
                     //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
+                    printf("Parent ID not 1. Raised flag no: %d \n", parentID_particletype+pmt_unfound);
                     break;
                 }
                 
@@ -365,6 +366,7 @@ int read_wc_images_full(bool verbose=true)
                     flag = 0;
                     //printf("ParentID/ParticleType are not 1/0. Not adding to image file. \n \n");
                     parentID_particletype++;
+                    printf("Particle Type not 0. Raised flag no: %d \n", parentID_particletype+pmt_unfound);
                     break;
                 }
 
@@ -402,11 +404,12 @@ int read_wc_images_full(bool verbose=true)
             else{
                 //cout << "ERROR, PMT NOT FOUND" << endl;
                 flag = 0;
-                pmt_unfound++;
+                printf("PMT Not found. Position: (%f, %f, %f) \n. Raised flag no: %d \n", pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2),parentID_particletype+pmt_unfound);
                 
+                pmt_unfound++;
             }
             
-            if (!flag) { printf("Raised flag no: %d \n", parentID_particletype+pmt_unfound); continue;}
+            if (!flag) {continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -437,7 +440,10 @@ int read_wc_images_full(bool verbose=true)
                 double y_rel = rel_vec.Dot(theta_vec)/(z_rel/radius*image_width/2); // Image y-position
                 
                 // Fill the 2D histogram at the image coordinates specified, with weights that average the PMT charge over each photon that is projected
-                image->Fill(x_rel, y_rel, curr_charge/num_photons);
+                
+                if (save){
+                    image->Fill(x_rel, y_rel, curr_charge/num_photons);
+                }
             }
             
             /* if (i == 0 && verbose){
@@ -454,34 +460,36 @@ int read_wc_images_full(bool verbose=true)
         
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
 
-        evt_info.particle_id = particle_out_id;
+        if (save) {
+            evt_info.particle_id = particle_out_id;
         
-        evt_info.energy = track_energy;
-        evt_info.data_set = set;
-        evt_info.dist_to_wall = distance_to_wall;
-        evt_info.radius = radius;
-        evt_info.image_width = image_width;
-        evt_info.phi_vec = phi_vec;
-        evt_info.theta_vec = theta_vec;
+            evt_info.energy = track_energy;
+            evt_info.data_set = set;
+            evt_info.dist_to_wall = distance_to_wall;
+            evt_info.radius = radius;
+            evt_info.image_width = image_width;
+            evt_info.phi_vec = phi_vec;
+            evt_info.theta_vec = theta_vec;
         
-        print_struct(event_info, &evt_info);
+            print_struct(event_info, &evt_info);
         
+            for (int x_pixel = 1; x_pixel <= NUM_PIXELS; ++x_pixel){
+                for (int y_pixel = 1; y_pixel <= NUM_PIXELS; ++y_pixel){
+                    out_file << image->GetBinContent(x_pixel, y_pixel) << ", ";
+                }
+            }
+            image->Reset();
+            
+        }
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
         
-        for (int x_pixel = 1; x_pixel <= NUM_PIXELS; ++x_pixel){
-            for (int y_pixel = 1; y_pixel <= NUM_PIXELS; ++y_pixel){
-                out_file << image->GetBinContent(x_pixel, y_pixel) << ", ";
-            }
-        }
-
         // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
         out_file << set << ", " << ss.str() << endl;
         out_file << endl;
-        
-        image->Reset();
-        
+    
     } printf("\n \n"); // End of loop over events
+    
     delete image;
     out_file.close()
     
