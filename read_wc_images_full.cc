@@ -61,7 +61,7 @@ int read_wc_images_full(bool verbose=true)
     ofstream out_file;
     ofstream event_info;
     
-    event_info.open("event_info.txt")
+    event_info.open("event_info.txt");
     out_file.open("get_3int_string.txt");
     
     ///////////////////////////////////////////////////
