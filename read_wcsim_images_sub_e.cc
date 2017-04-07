@@ -54,9 +54,9 @@ int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    char filename = "wcsim_e-_100.root";
-    char out_filename = "IMAGES/test_e-_100.txt";
-    char event_filename = "EVT_INFO/test_evt_info_e-_100.txt";
+    const char* filename = "wcsim_e-_100.root";
+    const char* out_filename = "IMAGES/test_e-_100.txt";
+    const char* event_filename = "EVT_INFO/test_evt_info_e-_100.txt";
     
     bool save = true;
     
