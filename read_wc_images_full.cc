@@ -145,7 +145,7 @@ int read_wc_images_full(bool verbose=true)
     TObject *tr;
     WCSimRootTrack *track;
     
-    for (int ev=0; ev<25; ev++){
+    for (int ev=0; ev<nevent; ev++){
     //for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance

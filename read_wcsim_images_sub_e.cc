@@ -32,7 +32,9 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool electron = true)
+//int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool electron = true)
+
+int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -52,9 +54,9 @@ int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool el
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    char filename = argv[1];
-    char out_filename = argv[2];
-    char event_filename = argv[3];
+    char filename = "wcsim_e-_100.root";
+    char out_filename = "IMAGES/test_e-_100.txt";
+    char event_filename = "EVT_INFO/test_evt_info_e-_100.txt";
     
     bool save = true;
     
@@ -331,7 +333,7 @@ int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool el
             t = wcsimrootcherenkovdigihit->GetT();
             tubeid = wcsimrootcherenkovdigihit->GetTubeId();
             
-            pmt = geo->GetPMT(tubeid);
+            WCSimRootPMT pmt = geo->GetPMT(tubeid);
             
             hit_id = (wcsimrootcherenkovdigihit->GetPhotonIds());
             
