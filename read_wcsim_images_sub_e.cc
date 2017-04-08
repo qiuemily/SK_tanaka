@@ -490,13 +490,12 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
             }
             image->Reset();
             
+            // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
+            out_file << set;
+            out_file << ", " << ss.str() << endl;
         }
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
-        
-        // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
-        out_file << set;
-        out_file << ", " << ss.str() << endl;
         
     } printf("\n \n"); // End of loop over events
     
