@@ -55,6 +55,7 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
     //const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/e-_50_file001.root";
     //const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_e-_50_file001";
     //const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_e-_50_file001.txt";
+    
     const char* filename = root_file;
     const char* out_filename = image_file;
     const char* event_filename = evt_file;
@@ -469,7 +470,7 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
         
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
         
-        if (save) {
+        if (save && (parentID_particletype+pmt_unfound) < 50) {
             evt_info.particle_id = particle_out_id;
             
             evt_info.energy = track_energy;

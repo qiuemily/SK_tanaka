@@ -469,7 +469,7 @@ int read_wcsim_images_mu(bool verbose = true, bool electron = false)
         
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
         
-        if (save) {
+        if (save && (parentID_particletype+pmt_unfound) < 50) {
             evt_info.particle_id = particle_out_id;
             
             evt_info.energy = track_energy;
