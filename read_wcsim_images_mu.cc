@@ -32,7 +32,7 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, const char* evt_file, bool verbose = true, bool electron = false)
+int read_wcsim_images_mu(bool verbose = true, bool electron = false)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -52,17 +52,13 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     ///////////////////////////////////////////////////
     // MODIFY// 
  
-    //const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/mu+_75_file001.root";
+    const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/mu+_75_file001.root";
     //const char* out_filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/test_out_mu+_from_77.txt";
     //const char* event_filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/test_evt_mu+_from_77.txt";
 
-    //const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_mu+_75_file001.txt";
-    //const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_mu+_75_file001.txt";
+    const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_mu+_75_file001.txt";
+    const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_mu+_75_file001.txt";
  
-    const char* filename = root_file;
-    const char* out_filename = image_file;
-    const char* event_filename = evt_file;
-
     bool save = true;
     
     int particle_out_id = ((electron)? 11 : 13);

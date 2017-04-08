@@ -62,8 +62,8 @@ int read_wc_images_full(bool verbose=true)
     ofstream out_file;
     ofstream event_info;
     
-    event_info.open("event_info.txt");
-    out_file.open("get_3int_string.txt");
+    event_info.open("test_event_info.txt");
+    out_file.open("test_image.txt");
     
     ///////////////////////////////////////////////////
     
@@ -145,7 +145,7 @@ int read_wc_images_full(bool verbose=true)
     TObject *tr;
     WCSimRootTrack *track;
     
-    for (int ev=0; ev<nevent; ev++){
+    for (int ev=0; ev<1; ev++){
     //for (int ev=0; ev<nevent; ev++){
      
         // Read the event from the tree into the WCSimRootEvent instance

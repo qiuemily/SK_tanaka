@@ -32,7 +32,9 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, const char* evt_file, bool verbose = true, bool electron = false)
+//int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool electron = true)
+
+int read_wcsim_images_e(bool verbose = true, bool electron = true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -50,19 +52,12 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     gSystem->Load("libWCSimRoot.so");
     
     ///////////////////////////////////////////////////
-    // MODIFY// 
- 
-    //const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/mu+_75_file001.root";
-    //const char* out_filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/test_out_mu+_from_77.txt";
-    //const char* event_filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/test_evt_mu+_from_77.txt";
-
-    //const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_mu+_75_file001.txt";
-    //const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_mu+_75_file001.txt";
- 
-    const char* filename = root_file;
-    const char* out_filename = image_file;
-    const char* event_filename = evt_file;
-
+    // MODIFY//
+    
+    const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/e-_50_file001.root";
+    const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_e-_50_file001";
+    const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_e-_50_file001.txt";
+    
     bool save = true;
     
     int particle_out_id = ((electron)? 11 : 13);
@@ -338,7 +333,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
             t = wcsimrootcherenkovdigihit->GetT();
             tubeid = wcsimrootcherenkovdigihit->GetTubeId();
             
-            pmt = geo->GetPMT(tubeid);
+            WCSimRootPMT pmt = geo->GetPMT(tubeid);
             
             hit_id = (wcsimrootcherenkovdigihit->GetPhotonIds());
             

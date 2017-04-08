@@ -32,9 +32,7 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-//int read_wcsim_images_sub_e(int argc, char* argv[], bool verbose = true, bool electron = true)
-
-int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
+int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const char* evt_file, bool verbose = true, bool electron = true)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -54,10 +52,13 @@ int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
     ///////////////////////////////////////////////////
     // MODIFY//
     
-    const char* filename = "ROOT_FILES/wcsim_e-_100.root";
-    const char* out_filename = "IMAGES/test_e-_100.txt";
-    const char* event_filename = "EVT_INFO/test_evt_info_e-_100.txt";
-    
+    //const char* filename = "/home/t/tanaka/qiuemily/WCSim_build/mydir/ROOT_FILES/e-_50_file001.root";
+    //const char* out_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/IMAGES/images_e-_50_file001";
+    //const char* event_filename = "/scratch/t/tanaka/qiuemily/WCSim_Output/EVT_INFO/evt_info_e-_50_file001.txt";
+    const char* filename = root_file;
+    const char* out_filename = image_file;
+    const char* event_filename = evt_file;
+
     bool save = true;
     
     int particle_out_id = ((electron)? 11 : 13);
@@ -65,8 +66,8 @@ int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
     ofstream out_file;
     ofstream event_info;
     
-    event_info.open(out_filename);
-    out_file.open(event_filename);
+    event_info.open(event_filename);
+    out_file.open(out_filename);
     
     ///////////////////////////////////////////////////
     
@@ -148,7 +149,7 @@ int read_wcsim_images_sub_e(bool verbose = true, bool electron = true)
     TObject *tr;
     WCSimRootTrack *track;
     
-    for (int ev=0; ev<25; ev++){
+    for (int ev=0; ev<nevent; ev++){
         //for (int ev=0; ev<nevent; ev++){
         
         // Read the event from the tree into the WCSimRootEvent instance
