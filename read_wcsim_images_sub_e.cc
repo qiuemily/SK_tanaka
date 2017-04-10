@@ -64,11 +64,11 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
     
     int particle_out_id = ((electron)? 11 : 13);
     
-    ofstream out_file;
-    ofstream event_info;
+    fstream out_file;
+    fstream event_info;
     
-    event_info.open(event_filename);
-    out_file.open(out_filename);
+    event_info.open(event_filename, fstream::in | fstream::out | fstream::app);
+    out_file.open(out_filename, fstream::in | fstream::out | fstream::app);
     
     ///////////////////////////////////////////////////
 
@@ -78,6 +78,8 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
     
     else if (!event_info && !out_file) {
         printf("Creating new image/event info files. \n");
+        event_info.open(event_filename, fstream::in | fstream::out | fstream::trunc);
+        out_file.open(out_filename, fstream::in | fstream::out | fstream::app);
     }
     
     else if (!event_info.is_open() || !out_file.is_open()){
