@@ -94,7 +94,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         return -1;
     }
     
-    printf("Events (%d to %d) \n", start_event_no, end_event_no-1);
+    printf("Events (%d to %d) \n", start_event_no, end_event_no);
     
     stringstream ss;
     ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
@@ -146,7 +146,6 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     WCSimRootTrigger* wcsimrootevent;
     
     int nevent = tree->GetEntries();
-    int saved_events = start_event_no-1;
     int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
     
     if (verbose) printf("Total number of events: %d \n", nevent);
@@ -175,12 +174,12 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     TObject *tr;
     WCSimRootTrack *track;
     
-    if (start_event_no > nevent || ){
+    if (start_event_no > nevent || start_event_no < 1){
         printf("Start event number not between 1 and nevent. Return \n");
         return -1;
     }
     
-    if (end_event_no > nevent){
+    if (end_event_no > nevent || end_event_no < 1){
         printf("End event number not between 1 and nevent. Return \n");
         return -1;
     }
@@ -507,8 +506,6 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
         
         if (save && (parentID_particletype+pmt_unfound) < 50) {
-            saved_events++;
-            
             evt_info.particle_id = particle_out_id;
             
             evt_info.energy = track_energy;
@@ -530,15 +527,11 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
             
             // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
             
-            saved_events++;
-            
             out_file << set;
             out_file << ", " << ss.str() << endl;
             
             out_file << "Event no: ";
             out_file << ev+1;
-            out_file << ", Saved event no: ";
-            out_file << saved_events;
             out_file << endl;
             
         }

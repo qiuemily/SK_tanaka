@@ -91,7 +91,7 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
         return -1;
     }
     
-    printf("Events (%d to %d) \n", start_event_no, end_event_no-1);
+    printf("Events (%d to %d) \n", start_event_no, end_event_no);
     
     stringstream ss;
     ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
@@ -143,7 +143,6 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
     WCSimRootTrigger* wcsimrootevent;
     
     int nevent = tree->GetEntries();
-    int saved_events = start_event_no-1;
     int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
     
     if (verbose) printf("Total number of events: %d \n", nevent);
@@ -525,15 +524,11 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
             
             // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
             
-            saved_events++;
-
             out_file << set;
             out_file << ", " << ss.str() << endl;
             
             out_file << "Event no: ";
             out_file << ev+1;
-            out_file << ", Saved event no: ";
-            out_file << saved_events;
             out_file << endl;
             
         }
