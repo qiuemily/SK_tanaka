@@ -74,6 +74,26 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     out_file.open(out_filename);
     
     ///////////////////////////////////////////////////
+
+    if (event_info && out_file) {
+        printf("Appending to existing image/event info files. \n");
+    }
+    
+    else if (!event_info && !out_file) {
+        printf("Creating new image/event info files. \n");
+    }
+    
+    else if (!event_info.is_open() || !out_file.is_open()){
+        printf("Unable to open image/event info files. Quit. \n");
+        return -1;
+    }
+    
+    else {
+        printf("Only one of two event info/image files exists????? Quit. \n");
+        return -1;
+    }
+    
+    printf("Events (%d to %d) \n", start_event_no, end_event_no-1);
     
     stringstream ss;
     ss << (electron == true? 1: 0) << ", " << (electron == false? 1: 0);
@@ -125,7 +145,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     WCSimRootTrigger* wcsimrootevent;
     
     int nevent = tree->GetEntries();
-    int saved_events = 0;
+    int saved_events = start_event_no-1;
     int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
     
     if (verbose) printf("Total number of events: %d \n", nevent);
@@ -154,7 +174,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     TObject *tr;
     WCSimRootTrack *track;
     
-    if (start_event_no >= nevent){
+    if (start_event_no > nevent){
         printf("Start event number is greater than number of events. Return \n");
         return -1;
     }
@@ -164,7 +184,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         end_event_no = nevent;
     }
     
-    for (int ev=start_event_no; ev<end_event_no; ev++){
+    for (int ev=start_event_no-1; ev<end_event_no; ev++){
         
         //for (int ev=0; ev<nevent; ev++){
         
@@ -182,7 +202,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         EventInformation evt_info;
         
         if (verbose){
-            printf("Event: %d \n", ev);
+            printf("Event: %d \n", ev+1);
             printf("Number of Sub-events (triggers) in current event: %d \n", number_triggers);
         }
         
@@ -200,7 +220,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         
         // Cherenkov hits associated with current trigger of current event
         if(verbose){
-            printf("Sub event number: %d \n", index);
+            printf("Sub event number: %d \n", index+1);
             
             printf("Ncherenkovhits %d \n",     ncherenkovhits);
             printf("Ncherenkovdigihits %d \n", ncherenkovdigihits);
@@ -508,12 +528,24 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
             image->Reset();
             
             // Append to the line the data_set number as well as the true particle identification (in 1hot form) before endl.
+            
+            saved_events++;
+            
             out_file << set;
             out_file << ", " << ss.str() << endl;
-        
+            
+            out_file << "Event no: ";
+            out_file << ev+1;
+            out_file << "Saved event no: ";
             out_file << saved_events;
             out_file << endl;
+            
         }
+        
+        else if (save && (parentID_particletype+pmt_unfound) >= 50) {
+            printf("Number of PMT's not found/Incorrect particle/parent ID's greater than 50. Don't save");
+        }
+        
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
         
