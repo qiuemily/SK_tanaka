@@ -67,31 +67,30 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     
     int particle_out_id = ((electron)? 11 : 13);
     
-    fstream out_file;
-    fstream event_info;
+    ofstream out_file;
+    ofstream event_info;
     
-    event_info.open(event_filename, fstream::in | fstream::out | fstream::app);
-    out_file.open(out_filename, fstream::in | fstream::out | fstream::app);
+    ifstream if_exists_event(event_filename);
+    ifstream if_exists_out(out_filename);
     
     ///////////////////////////////////////////////////
     
-    if (event_info && out_file) {
-        printf("Appending to existing image/event info files. \n");
+    if (!if_exists_event.good() && !if_exists_out.good()) {
+        
+        printf("Creating new image/event info files. \n");
+        event_info.open(event_filename, ofstream::trunc);
+        out_file.open(out_filename, ofstream::app);
     }
     
-    else if (!event_info && !out_file) {
-        printf("Creating new image/event info files. \n");
-        event_info.open(event_filename, fstream::in | fstream::out | fstream::trunc);
+    else if (if_exists_event.good() && if_exists_out.good()) {
+        
+        printf("Appending to existing image/event info files. \n");
+        event_info.open(event_filename, fstream::in | fstream::out | fstream::app);
         out_file.open(out_filename, fstream::in | fstream::out | fstream::app);
     }
     
-    else if (!event_info.is_open() || !out_file.is_open()){
-        printf("Unable to open image/event info files. Quit. \n");
-        return -1;
-    }
-    
     else {
-        printf("Only one of two event info/image files exists????? Quit. \n");
+        printf("Error when opening output text file. Quit. \n");
         return -1;
     }
     
