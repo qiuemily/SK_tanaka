@@ -12,7 +12,7 @@ cd ${WCSIM_DIR}
 
 #root -b -q 'read_wcsim_images_sub_e.cc("$IN_ROOT_FILE", "${OUT_IMAGE_FILE}", "${OUT_EVT_INFO")'
 
-root -b -q 'read_wcsim_images_sub_e.cc('"\"${IN_ROOT_FILE}\", \"${OUT_IMAGE_FILE}\", \"${OUT_EVT_INFO}\""')'
+root -b -q 'read_wcsim_images_sub_e.cc('"\"${IN_ROOT_FILE}\", \"${OUT_IMAGE_FILE}\", \"${OUT_EVT_INFO}\", $START_NO, $END_NO"')'
 
 #echo 'read_wcsim_images_sub_e.cc('"\"${IN_ROOT_FILE}\", \"${OUT_IMAGE_FILE}\", \"${OUT_EVT_INFO}\""')'
 

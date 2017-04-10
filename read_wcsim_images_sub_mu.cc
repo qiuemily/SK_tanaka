@@ -32,7 +32,7 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, const char* evt_file, bool verbose = true, bool electron = false)
+int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, const char* evt_file, int start_event_no, int end_event_no, bool verbose = true, bool electron = false)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -115,7 +115,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     //WCSimRootGeom *geo = new WCSimRootGeom()
     geotree->SetBranchAddress("wcsimrootgeom", &geo);
     
-    if(geotree->GetEntries() == 1) printf("Confirmed... GeoTree has 1 entry. \n \n");
+    if (geotree->GetEntries() == 1) printf("Confirmed... GeoTree has 1 entry. \n \n");
     if (geotree->GetEntries() == 0) exit(9);
     
     geotree->GetEntry(0);
@@ -125,6 +125,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     WCSimRootTrigger* wcsimrootevent;
     
     int nevent = tree->GetEntries();
+    int saved_events = 0;
     int parentID_particletype, index, num_neg_triggers, pmt_unfound, total_hits;
     
     if (verbose) printf("Total number of events: %d \n", nevent);
@@ -153,7 +154,18 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     TObject *tr;
     WCSimRootTrack *track;
     
-    for (int ev=0; ev<nevent; ev++){
+    if (start_event_no >= nevent){
+        printf("Start event number is greater than number of events. Return \n");
+        return -1;
+    }
+    
+    if (end_event_no > nevent){
+        printf("End event number is greater than nevent -> Set equal to nevent. \n");
+        end_event_no = nevent;
+    }
+    
+    for (int ev=start_event_no; ev<end_event_no; ev++){
+        
         //for (int ev=0; ev<nevent; ev++){
         
         // Read the event from the tree into the WCSimRootEvent instance
@@ -474,6 +486,8 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         printf("Number of hits with PMTs not found: %d \n \n", pmt_unfound);
         
         if (save && (parentID_particletype+pmt_unfound) < 50) {
+            saved_events++;
+            
             evt_info.particle_id = particle_out_id;
             
             evt_info.energy = track_energy;
@@ -497,6 +511,8 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
             out_file << set;
             out_file << ", " << ss.str() << endl;
         
+            out_file << saved_events;
+            out_file << endl;
         }
         // Reinitialize super event between loops.
         wcsimrootsuperevent->ReInitialize();
