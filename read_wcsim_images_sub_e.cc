@@ -171,14 +171,14 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
     TObject *tr;
     WCSimRootTrack *track;
     
-    if (start_event_no > nevent){
-        printf("Start event number is greater than number of events. Return \n");
+    if (start_event_no > nevent || start_event_no < 1){
+        printf("Start event number not between 1 and nevent. Return \n");
         return -1;
     }
     
-    if (end_event_no > nevent){
-        printf("End event number is greater than nevent -> Set equal to nevent. \n");
-        end_event_no = nevent;
+    if (end_event_no > nevent || end_event_no < 1){
+        printf("End event number not between 1 and nevent. Return \n");
+        return -1;
     }
     
     for (int ev=start_event_no-1; ev<end_event_no; ev++){
@@ -531,7 +531,7 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
             
             out_file << "Event no: ";
             out_file << ev+1;
-            out_file << "Saved event no: ";
+            out_file << ", Saved event no: ";
             out_file << saved_events;
             out_file << endl;
             
