@@ -367,7 +367,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
             t = wcsimrootcherenkovdigihit->GetT();
             tubeid = wcsimrootcherenkovdigihit->GetTubeId();
             
-            pmt = geo->GetPMT(tubeid);
+            WCSimRootPMT pmt = geo->GetPMT(tubeid);
             
             hit_id = (wcsimrootcherenkovdigihit->GetPhotonIds());
             
