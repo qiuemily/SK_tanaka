@@ -32,7 +32,7 @@
 #define PMT_THRESHOLD 0.0001
 using namespace std;
 
-int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file, const char* evt_file, const char* console_output, int start_event_no, int end_event_no, bool verbose = true, bool electron = false)
+int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file, const char* evt_file, const char* console_output_filename, int start_event_no, int end_event_no, bool verbose = true, bool electron = false)
 {
     // Load the library with class dictionary info
     // (create with "gmake shared")
@@ -66,17 +66,20 @@ int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file,
     
     ofstream out_file;
     ofstream event_info;
-    
+    ofstream console_output;
+
     ifstream if_exists_event(event_filename);
     ifstream if_exists_out(out_filename);
-    
+   
+    console_output.open(console_output_filename);
+     
     ///////////////////////////////////////////////////
     
     if (!if_exists_event.good() && !if_exists_out.good()) {
         
         console_output << "Creating new image/event info files.";
-        event_info.open(event_filename, ofstream::app);
-        out_file.open(out_filename, ofstream::app);
+        event_info.open(event_filename, ofstream::trunc);
+        out_file.open(out_filename, ofstream::trunc);
     }
     
     else if (if_exists_event.good() && if_exists_out.good()) {
@@ -457,9 +460,7 @@ int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file,
                  }*/
                 
             }
-
-            if (parentID_particletype+pmt_unfound >= 50) break;
-
+            
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
             // console_output <<"PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));
