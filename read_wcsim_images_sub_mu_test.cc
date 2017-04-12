@@ -75,7 +75,7 @@ int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file,
     if (!if_exists_event.good() && !if_exists_out.good()) {
         
         console_output << "Creating new image/event info files.";
-        event_info.open(event_filename, ofstream::trunc);
+        event_info.open(event_filename, ofstream::app);
         out_file.open(out_filename, ofstream::app);
     }
     
@@ -457,7 +457,9 @@ int read_wcsim_images_sub_mu_test(const char* root_file, const char* image_file,
                  }*/
                 
             }
-            
+
+            if (parentID_particletype+pmt_unfound >= 50) break;
+
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
             // console_output <<"PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));

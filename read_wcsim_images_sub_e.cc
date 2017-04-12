@@ -428,6 +428,8 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
                 
             }
             
+            if (parentID_particletype+pmt_unfound >= 50) break;
+
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
             // printf("PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));
