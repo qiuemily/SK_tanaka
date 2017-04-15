@@ -4,14 +4,9 @@
 
 source ${HOME}/pre_run.sh 
  
-#export IN_ROOT_FILE=${WCSIM_DIR}/${ROOT_FILE}
-#export OUT_IMAGE_FILE=${SCRATCH}/WCSim_Output/IMAGES/${IMAGE_FILE}
-#export OUT_EVT_INFO=${SCRATCH}/WCSim_Output/EVT_INFO/${INFO_FILE}
-
-export IN_ROOT_FILE=${WCSIM_DIR}/ROOT_FILES/e-_500_file0${FILE_NO}.root
-
-export OUT_IMAGE_FILE=${SCRATCH}/WCSim_Output/IMAGES/images_e-_500_file0${FILE_NO}.txt
-export OUT_EVT_INFO=${SCRATCH}/WCSim_Output/EVT_INFO/evt_info_e-_500_file0${FILE_NO}.txt
+export IN_ROOT_FILE=${WCSIM_DIR}/ROOT_FILES/e-_500_file_${FILE_NO}.root
+export OUT_IMAGE_FILE=${SCRATCH}/WCSim_Output/IMAGES/images_e-_500_file_${FILE_NO}.txt
+export OUT_EVT_INFO=${SCRATCH}/WCSim_Output/IMAGES/info_e-_500_file_${FILE_NO}.txt
 
 cd ${WCSIM_DIR}
 
