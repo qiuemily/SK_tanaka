@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=8,walltime=1:00:00
+#PBS -l nodes=1:ppn=8,walltime=2:00:00
 #PBS -N WCSim_Images_E
 
 source ${HOME}/pre_run.sh 

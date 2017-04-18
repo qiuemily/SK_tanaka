@@ -75,7 +75,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
     if (!if_exists_event.good() && !if_exists_out.good()) {
         
         printf("Creating new image/event info files. \n");
-        event_info.open(event_filename, ofstream::app);
+        event_info.open(event_filename, ofstream::trunc);
         out_file.open(out_filename, ofstream::app);
     }
     
@@ -344,6 +344,8 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         {
             // Loop through elements in the TClonesArray of WCSimRootCherenkovDigHits
             
+            if (parentID_particletype+pmt_unfound > 50) {break;}
+
             TObject *element = (wcsimrootevent->GetCherenkovDigiHits())->At(i);
             TObject *cht, *tr;
             WCSimRootTrack *track;
@@ -427,9 +429,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
                  }*/
                 
             }
-
-            if (parentID_particletype+pmt_unfound >= 50) break;
-
+            
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
             // printf("PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));
@@ -453,7 +453,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
                 pmt_unfound++;
             }
             
-            if (!flag) { continue;}
+            if (!flag) {continue;}
             
             // Set number of photons to generate, default PHOTONS_PER_PMT but three times as many for sets 3 and 4 to get smoother images.
             bool extra_photons = (set == 3 || set == 4);
@@ -536,7 +536,7 @@ int read_wcsim_images_sub_mu(const char* root_file, const char* image_file, cons
         }
         
         else if (save && (parentID_particletype+pmt_unfound) >= 50) {
-            printf("Number of PMT's not found/Incorrect particle/parent ID's greater than 50. Don't save");
+            printf("Number of PMT's not found/Incorrect particle/parent ID's greater than 50. Don't save. \n \n");
         }
         
         // Reinitialize super event between loops.

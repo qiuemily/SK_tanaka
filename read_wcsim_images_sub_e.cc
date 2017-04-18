@@ -180,6 +180,11 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
         printf("End event number not between 1 and nevent. Return \n");
         return -1;
     }
+
+    if (end_event_no < start_event_no){
+        printf("Start event number larger than end event number. Return \n");
+        return -1;
+    }
     
     for (int ev=start_event_no-1; ev<end_event_no; ev++){
         
@@ -343,7 +348,9 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
         for (int i=0;i<ncherenkovdigihits;i++)
         {
             // Loop through elements in the TClonesArray of WCSimRootCherenkovDigHits
-            
+        
+	    if (parentID_particletype+pmt_unfound > 50) {break;}
+    
             TObject *element = (wcsimrootevent->GetCherenkovDigiHits())->At(i);
             TObject *cht, *tr;
             WCSimRootTrack *track;
@@ -428,8 +435,6 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
                 
             }
             
-            if (parentID_particletype+pmt_unfound >= 50) break;
-
             pmt_position = TVector3(pmt.GetPosition(0), pmt.GetPosition(1), pmt.GetPosition(2));
             
             // printf("PMT Position: (%f, %f, %f) \n", pmt_position(0), pmt_position(1), pmt_position(2));
@@ -536,7 +541,7 @@ int read_wcsim_images_sub_e(const char* root_file, const char* image_file, const
         }
         
         else if (save && (parentID_particletype+pmt_unfound) >= 50) {
-            printf("Number of PMT's not found/Incorrect particle/parent ID's greater than 50. Don't save");
+            printf("Number of PMT's not found/Incorrect particle/parent ID's greater than 50. Don't save. \n \n");
         }
 
         // Reinitialize super event between loops.
