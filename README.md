@@ -1,10 +1,10 @@
-Particle Identification in Cherenkov Detectors using SKAlgorithm and WCSim.
+# Particle Identification in Cherenkov Detectors using SKAlgorithm and WCSim
 
-Author: Theodore Tomalty
-Email: theo@tomalty.com
+### Author: Theodore Tomalty
+#### Email: theo@tomalty.com
 
-Additional Comments by: Emily Qiu
-Email: emily.qiu@mail.utoronto.ca
+### Additional Comments by: Emily Qiu
+#### Email: emily.qiu@mail.utoronto.ca
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Folder Permissions
