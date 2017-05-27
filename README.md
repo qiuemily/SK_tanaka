@@ -108,7 +108,7 @@ module load python/2.7.8
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 WCSim Read Program Input/Output File Structure:
 
-This program was created to read the WCSim output ROOT files and write the PMT charge/timing information to 2D machine learning friendly images (as discussed in Theo's report). It looks only at the first trigger for each event, and gets the corresponding parent_id for each PMT CherenkovDigiHit and the particle type corresponding to each track. If these are not 0 and 1 respectively, the PMT charge information is not saved. If the number of these “faulty” hits exceeds 50, the event is not saved as an image. For WCSim, this code is the equivalent of Theo's process.sh (fiTQun is not performed here).
+This program was created to read the WCSim output ROOT files and write the PMT charge/timing information to 2D machine learning friendly images (as discussed in Theo's report). It looks only at the first trigger for each event, and gets the corresponding parent_id for each PMT CherenkovDigiHit and the particle type corresponding to each track. If these are not 0 and 1 respectively, the PMT charge information is not saved. If the number of these faulty hits exceeds 50, the event is not saved as an image. For WCSim, this code is the equivalent of Theo's process.sh (fiTQun is not performed here).
 
 For 500 WCSim electron/muon events, ROOT files of the form:
 
@@ -131,8 +131,8 @@ Once the correct environment variables have been defined, the mu_sub.sh and e_su
 
 To submit a ticket, the syntax is (for electrons and muons, respectively):
 
-        qsub -v "FILE_NO=file_no, START_NO=start_no, END_NO=end_no” e_sub.sh
-        qsub -v "FILE_NO=file_no, START_NO=start_no, END_NO=end_no” mu_sub.sh
+        qsub -v "FILE_NO=file_no, START_NO=start_no, END_NO=end_no" e_sub.sh
+        qsub -v "FILE_NO=file_no, START_NO=start_no, END_NO=end_no" mu_sub.sh
 
 It is recommended to run the program on 20 events at a time (for electrons) and 40 events at a time (for muons), though the user can attempt to run on more events in 1 submission. For a larger number of events, there is a higher probability for job time-out; when this occurs, perform the following steps:
 
